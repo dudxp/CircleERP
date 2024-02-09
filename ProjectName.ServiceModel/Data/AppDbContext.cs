@@ -15,7 +15,6 @@ namespace ProjectName.ServiceModel.Data
         {
             string connectionString = "";
             OdbcConnection connection = new OdbcConnection(connectionString);
-            optionsBuilder.Use
 
             base.OnConfiguring(optionsBuilder);
         }
