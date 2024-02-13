@@ -1,26 +1,24 @@
 import {
-  List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  SvgIcon,
 } from "@mui/material";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import { Link } from "react-router-dom";
 import React from "react";
 
 interface Props {
   name: string;
   path: string;
-  index: number;
+  buttonIcon: typeof SvgIcon;
 }
 
 export default function ItemList(props: Props) {
-  const { name, path, index } = props;
+  const { name, path, buttonIcon: ButtonIcon } = props;
   return (
     <React.Fragment>
-      <ListItem key={index} disablePadding>
+      <ListItem disablePadding>
         <ListItemButton
           component={Link}
           to={path}
@@ -32,7 +30,7 @@ export default function ItemList(props: Props) {
           }}
         >
           <ListItemIcon sx={{ display: "contents" }}>
-            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            <ButtonIcon/>
           </ListItemIcon>
           <ListItemText primary={name} />
         </ListItemButton>

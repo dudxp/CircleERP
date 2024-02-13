@@ -1,40 +1,15 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
 import Divider from "@mui/material/Divider";
-
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Home from "pages/Home";
+import { Route,  Routes } from "react-router-dom";
 import { RoutesPath, itemsList } from "shared";
 import Currency from "pages/Cadastros/Currency";
-import Menu from "pages/Menu";
-import { Link } from "react-router-dom";
 import ItemList from "./ItemList";
-import { Badge, Container, List, Paper, createTheme, styled } from "@mui/material";
-import { useState } from "react";
+import { Container, List, createTheme, styled } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
 import Temas from "styles/Tema.module.scss";
-
-// const AppBar = styled(MuiAppBar, {
-//   shouldForwardProp: (prop) => prop !== "open",
-// })<AppBarProps>(({ theme, open }) => ({
-//   background: "#fff",
-//   zIndex: theme.zIndex.drawer + 1,
-//   transition: theme.transitions.create(["width", "margin"], {
-//     easing: theme.transitions.easing.sharp,
-//     duration: theme.transitions.duration.leavingScreen,
-//   }),
-//   ...(open && {
-//     marginLeft: drawerWidth,
-//     width: `calc(100% - ${drawerWidth}px)`,
-//     transition: theme.transitions.create(["width", "margin"], {
-//       easing: theme.transitions.easing.sharp,
-//       duration: theme.transitions.duration.enteringScreen,
-//     }),
-//   }),
-// }));
 
 const DashboardDrawer = styled(Drawer)(
   () => ({
@@ -73,7 +48,7 @@ export default function Dashboard() {
           <Divider />
           <List component="nav">
             {itemsList.map((route, index) => {
-              return <ItemList {...route} index={index} />;
+              return <ItemList {...route} key={index}/>
             })}
           </List>
         </DashboardDrawer>

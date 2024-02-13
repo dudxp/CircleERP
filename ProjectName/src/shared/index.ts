@@ -1,5 +1,6 @@
-import { Theme, ThemeProvider, ThemeProviderProps } from "@emotion/react";
-// import {  } from '@mui/material/styles/createTheme';
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import { CurrencyBitcoin, Home, Paid } from "@mui/icons-material";
 
 export enum RoutesPath {
   Home = '/',
@@ -10,16 +11,22 @@ export enum RoutesPath {
 export const itemsList = [
   { 
     name: "Inicio", 
-    path: '/' 
+    path: '/',
+    buttonIcon: Home
   },
   { 
     name: "Moeda", 
-    path: '/currency' 
+    path: '/currency',
+    buttonIcon: Paid
   }
 ];
 
-const bootstrap = require('bootstrap');
-
+export interface ICurrency {
+  id: number,
+  code: string,
+  description: string,
+  rating: number
+}
 
 export type Order = "asc" | "desc";
 

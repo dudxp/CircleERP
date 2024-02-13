@@ -1,4 +1,3 @@
-import React from "react";
 import { Order } from "shared";
 
 export function stableSort<T>(

@@ -1,6 +1,5 @@
 // import { bootstrap } from 'shared';
 import {
-  Box,
   Button,
   FormControl,
   Input,
@@ -11,17 +10,20 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
+import { ICurrency } from "shared";
 
 const TextFieldStyled = styled(TextField)(() => ({
   margin: "10px",
 }));
 
-// interface Props {
-//   currency: ICurrency
-//   setCurrency: ICurrency
-// }
+interface Props {
+  currency: ICurrency[],
+  setCurrency: React.Dispatch<React.SetStateAction<ICurrency[]>>
+}
 
-export default function FormCurrency() {
+export default function FormCurrency(props: Props) {
+  const {currency, setCurrency} = props;
+
   const [codigo, setCodigo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [taxa, setTaxa] = useState(0);
@@ -36,10 +38,15 @@ export default function FormCurrency() {
       }
     )
       .then((response) => {
-        // setRestaurantes([...restaurantes, response.data]);
+        if (currency) {
+          setCurrency([...currency, response.data]);
+        }
+        else setCurrency(response.data);
         alert("Restaurante registrado com sucesso");
       })
-    console.log(codigo, descricao,taxa);
+      .catch((response) =>{
+        console.log(response.message)
+      })
   };
 
   return (

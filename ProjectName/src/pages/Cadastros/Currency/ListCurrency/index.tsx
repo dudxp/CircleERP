@@ -2,49 +2,22 @@ import {
   Box,
   Checkbox,
   FormControlLabel,
-  IconButton,
   Switch,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel,
-  Toolbar,
-  Tooltip,
-  Typography,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
 import * as React from "react";
 
 import EnhancedTableHead from "components/Table/EnhancedTableHead";
-import { Order } from "shared";
+import { ICurrency, Order } from "shared";
 import EnhancedTableToolbar from "components/Table/EnhancedTableToolbar";
 import { getComparator, stableSort } from "components/Table/TableFunctions";
-
-interface Data {
-  id: number,
-  code: string,
-  description: string,
-  rating: number,
-}
-
-function createData(
-  id: number,
-  code: string,
-  description: string,
-  rating: number,
-): Data {
-  return {
-    id,
-    code,
-    description,
-    rating
-  };
-}
 
 const headCells = [
   {
@@ -74,27 +47,36 @@ const headCells = [
 ];
 
 //Ver como modificar
+interface Props {
+  currency: ICurrency[],
+  setCurrency: React.Dispatch<React.SetStateAction<ICurrency[]>>
+}
 
-export default function ListCurrency() {
+export default function ListCurrency(props: Props) {
+  const {currency, setCurrency} = props;
+
   const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("id");
+  const [orderBy, setOrderBy] = React.useState<keyof ICurrency>("id");
   const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const [moedas, setMoeda] = React.useState<Data[]>([])
+  // const [currency, setCurrency] = React.useState<Data[]>([])
 
   React.useEffect(() => {
     axios.get("http://localhost:8000/api/v2/currency/")
-    .then((response) => {
-      setMoeda(response.data);
-    });
+      .then((response) => {
+        setCurrency(response.data);
+      })
+      .catch((response) =>{
+        console.log(response.message)
+      })  
   },[])
 
   function handleRequestSort (
     event: React.MouseEvent<unknown>,
-    property: keyof Data
+    property: keyof ICurrency
   ) {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -103,7 +85,7 @@ export default function ListCurrency() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = moedas.map((moeda) => moeda.id);
+      const newSelected = currency.map((moeda) => moeda.id);
       setSelected(newSelected);
       return;
     }
@@ -148,15 +130,15 @@ export default function ListCurrency() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - moedas.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - currency.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort<Data>(moedas, getComparator<keyof Data>(order, orderBy)).slice(
+      stableSort<ICurrency>(currency, getComparator<keyof ICurrency>(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       ),
-    [order, orderBy, page, rowsPerPage, moedas]
+    [order, orderBy, page, rowsPerPage, currency]
   );
 
   return (
@@ -175,7 +157,7 @@ export default function ListCurrency() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={moedas.length}
+              rowCount={currency.length}
               headCells={headCells}
               checkBoxAriaLabel="Marcar todas as comidas"
             />
@@ -233,7 +215,7 @@ export default function ListCurrency() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={moedas.length}
+          count={currency.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
