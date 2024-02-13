@@ -22,7 +22,7 @@ interface Props<T> {
   ) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
-  orderBy: string | number | undefined;
+  orderBy: string | number | symbol;
   rowCount: number;
   headCells: HeadCell<T>[];
   checkBoxAriaLabel: string;

@@ -24,17 +24,17 @@ interface Props {
 export default function FormCurrency(props: Props) {
   const {currency, setCurrency} = props;
 
-  const [codigo, setCodigo] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [taxa, setTaxa] = useState(0);
+  const [code, setCode] = useState("");
+  const [description, setDescription] = useState("");
+  const [rating, setRating] = useState(0);
 
   const cadastrarMoeda = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    axios.put("http://localhost:8000/api/v2/currency/",
+    axios.post("http://localhost:8000/api/v2/currency/",
       {
-        codigo: codigo,
-        descricao: descricao,
-        currency: taxa  
+        code: code,
+        description: description,
+        rating: rating  
       }
     )
       .then((response) => {
@@ -42,7 +42,7 @@ export default function FormCurrency(props: Props) {
           setCurrency([...currency, response.data]);
         }
         else setCurrency(response.data);
-        alert("Restaurante registrado com sucesso");
+        alert("Moeda registrada com sucesso");
       })
       .catch((response) =>{
         console.log(response.message)
@@ -56,8 +56,8 @@ export default function FormCurrency(props: Props) {
           id="outlined-basic"
           label="Código moeda"
           variant="outlined"
-          value={codigo}
-          onChange={(event) => setCodigo(event.target.value)}
+          value={code}
+          onChange={(event) => setCode(event.target.value)}
           required
         />
         <TextFieldStyled
@@ -67,19 +67,18 @@ export default function FormCurrency(props: Props) {
             width: "100%"
           }}
           variant="outlined"
-          value={descricao}
-          onChange={(event) => setDescricao(event.target.value)}
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
           required
         />
         <FormControl variant="standard">
-          <InputLabel htmlFor="taxa-cambio">Taxa de câmbio</InputLabel>
+          <InputLabel htmlFor="rating-cambio">Taxa de câmbio</InputLabel>
           <Input
-            id="taxa-cambio"
+            id="rating-cambio"
             placeholder="Taxa de câmbio"
-            // variant="outlined"
             type="number"
-            value={taxa}
-            onChange={(event) => setTaxa(Number(event.target.value))}
+            value={rating}
+            onChange={(event) => setRating(Number(event.target.value))}
             required
           />
         </FormControl>

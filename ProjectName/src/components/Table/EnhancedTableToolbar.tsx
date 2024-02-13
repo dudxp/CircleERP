@@ -4,18 +4,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
 interface EnhancedTableToolbarProps {
-  numSelected: number;
+  selected: number[];
 }
 
 export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
+  const { selected } = props;
 
   return (
     <Toolbar
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
+        ...(selected.length > 0 && {
           bgcolor: (theme) =>
             alpha(
               theme.palette.primary.main,
@@ -24,14 +24,14 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         }),
       }}
     >
-      {numSelected > 0 ? (
+      {selected.length > 0 ? (
         <Typography
           sx={{ flex: "1 1 100%" }}
           color="inherit"
           variant="subtitle1"
           component="div"
         >
-          {numSelected} selected
+          {selected.length} selected
         </Typography>
       ) : (
         <Typography
@@ -40,13 +40,13 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           id="tableTitle"
           component="div"
         >
-          Nutrition
+          Moeda
         </Typography>
       )}
-      {numSelected > 0 ? (
+      {selected.length > 0 ? (
         <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
+          <IconButton aria-label="delete" onClick={() => {console.log(selected.length)}}>
+            <DeleteIcon/>
           </IconButton>
         </Tooltip>
       ) : (

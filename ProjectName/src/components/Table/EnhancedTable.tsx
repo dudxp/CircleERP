@@ -47,17 +47,18 @@ const headCells = [
 ];
 
 //Ver como modificar
-interface Props {
-  currency: ICurrency[],
-  setCurrency: React.Dispatch<React.SetStateAction<ICurrency[]>>,
-  deleteCurrency(id: number): void
+interface Props<T> {
+  data: T[],
+  // headCeals:,
+  setData: React.Dispatch<React.SetStateAction<T[]>>,
+  deleteData(id: number): void,
 }
 
-export default function ListCurrency(props: Props) {
-  const {currency, setCurrency} = props;
+export default function EnhancedTable<T extends { [key: string]: any }>(props: Props<T>) {
+  const {data, setData, deleteData} = props;
 
   const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof ICurrency>("id");
+  const [orderBy, setOrderBy] = React.useState<keyof T>("id");
   const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
@@ -68,7 +69,7 @@ export default function ListCurrency(props: Props) {
   React.useEffect(() => {
     axios.get("http://localhost:8000/api/v2/currency/")
       .then((response) => {
-        setCurrency(response.data);
+        setData(response.data);
       })
       .catch((response) =>{
         console.log(response.message)
@@ -77,7 +78,7 @@ export default function ListCurrency(props: Props) {
 
   function handleRequestSort (
     event: React.MouseEvent<unknown>,
-    property: keyof ICurrency
+    property: keyof T
   ) {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -86,7 +87,7 @@ export default function ListCurrency(props: Props) {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = currency.map((moeda) => moeda.id);
+      const newSelected = data.map((dataItem) => dataItem.id);
       setSelected(newSelected);
       return;
     }
@@ -125,15 +126,15 @@ export default function ListCurrency(props: Props) {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - currency.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort<ICurrency>(currency, getComparator<keyof ICurrency>(order, orderBy)).slice(
+      stableSort<T>(data, getComparator<keyof T>(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       ),
-    [order, orderBy, page, rowsPerPage, currency]
+    [order, orderBy, page, rowsPerPage, data]
   );
 
   return (
@@ -152,7 +153,7 @@ export default function ListCurrency(props: Props) {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={currency.length}
+              rowCount={data.length}
               headCells={headCells}
               checkBoxAriaLabel="Marcar todas as comidas"
             />
@@ -210,7 +211,7 @@ export default function ListCurrency(props: Props) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={currency.length}
+          count={data.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
