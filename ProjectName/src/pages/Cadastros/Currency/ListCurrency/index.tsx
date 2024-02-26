@@ -18,6 +18,8 @@ import EnhancedTableHead from "components/Table/EnhancedTableHead";
 import { ICurrency, Order } from "shared";
 import EnhancedTableToolbar from "components/Table/EnhancedTableToolbar";
 import { getComparator, stableSort } from "components/Table/TableFunctions";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const headCells = [
   {
@@ -43,6 +45,18 @@ const headCells = [
     numeric: true,
     disablePadding: false,
     label: "Taca de câmbio",
+  },
+  {
+    id: "edit",
+    numeric: false,
+    disablePadding: true,
+    label: "Editar",
+  },
+  {
+    id: "delete",
+    numeric: false,
+    disablePadding: true,
+    label: "Deletar",
   }
 ];
 
@@ -164,8 +178,6 @@ export default function ListCurrency(props: Props) {
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, moeda.id)}
-                    role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
                     key={moeda.id}
@@ -174,11 +186,13 @@ export default function ListCurrency(props: Props) {
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
+                        role="checkbox"
                         color="primary"
                         checked={isItemSelected}
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
+                        onClick={(event) => handleClick(event, moeda.id)}
                       />
                     </TableCell>
                     <TableCell align="right" padding="none">{moeda.id}</TableCell>
@@ -192,6 +206,13 @@ export default function ListCurrency(props: Props) {
                     </TableCell>
                     <TableCell align="left">{moeda.description}</TableCell>
                     <TableCell align="right">{moeda.rating}</TableCell>
+                    <TableCell align="left"
+                      
+                    
+                    ><EditIcon/></TableCell>
+                    <TableCell align="left">
+                      <DeleteIcon/>
+                    </TableCell>
                   </TableRow>
                 );
               })}

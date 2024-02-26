@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import { ICurrency } from "shared";
+import style from "./FormCurrency.module.scss";
 
 const TextFieldStyled = styled(TextField)(() => ({
   margin: "10px",
@@ -83,16 +84,15 @@ export default function FormCurrency(props: Props) {
           />
         </FormControl>
       </Stack>
-      <div>
-
+      <div className={style.container}>
         <Button
           type="submit"
           variant="contained"
           sx={{
             height: "40px",
             width: "100px",
-            alignSelf: "",
             margin: "10px",
+            left: "0"
           }}
           >
           Cadastrar
