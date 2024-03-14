@@ -147,16 +147,16 @@ export default function EnhancedTable<T extends { [key: string]: any }>(props: P
             aria-labelledby="tableTitle"
             size={dense ? "small" : "medium"}
           >
-            <EnhancedTableHead
+            {/* <EnhancedTableHead
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={data.length}
-              headCells={headCells}
+              // headCells={headCells}
               checkBoxAriaLabel="Marcar todas as comidas"
-            />
+            /> */}
             <TableBody>
               {visibleRows.map((moeda, index) => {
                 const isItemSelected = isSelected(moeda.id);

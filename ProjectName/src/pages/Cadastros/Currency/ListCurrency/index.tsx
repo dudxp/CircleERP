@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   Switch,
@@ -11,15 +12,14 @@ import {
   TableRow,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import axios from "axios";
-import * as React from "react";
-
+import { useEffect, useMemo, useState } from "react";
 import EnhancedTableHead from "components/Table/EnhancedTableHead";
-import { ICurrency, Order } from "shared";
+import { ICurrency, Order, axiosV2 } from "shared";
 import EnhancedTableToolbar from "components/Table/EnhancedTableToolbar";
 import { getComparator, stableSort } from "components/Table/TableFunctions";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import React from "react";
 
 const headCells = [
   {
@@ -27,36 +27,42 @@ const headCells = [
     numeric: true,
     disablePadding: true,
     label: "Id interno",
+    align: "right",
   },
   {
     id: "code",
     numeric: false,
     disablePadding: false,
     label: "Código da moeda",
+    align: "left",
   },
   {
     id: "description",
     numeric: false,
     disablePadding: false,
     label: "Descrição",
+    align: "left",
   },
   {
     id: "rating",
     numeric: true,
     disablePadding: false,
     label: "Taca de câmbio",
+    align: "right",
   },
   {
     id: "edit",
     numeric: false,
     disablePadding: true,
     label: "Editar",
+    align: "center",
   },
   {
     id: "delete",
     numeric: false,
     disablePadding: true,
     label: "Deletar",
+    align: "center",
   }
 ];
 
@@ -65,28 +71,31 @@ interface Props {
   currency: ICurrency[],
   setCurrency: React.Dispatch<React.SetStateAction<ICurrency[]>>,
   deleteCurrency(id: number): void
+  setCurrencyUpdate: React.Dispatch<React.SetStateAction<ICurrency | undefined>>
+  // filterCurrency(): void;
 }
 
 export default function ListCurrency(props: Props) {
-  const {currency, setCurrency} = props;
+  const {currency, setCurrency, setCurrencyUpdate, deleteCurrency} = props;
 
-  const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof ICurrency>("id");
-  const [selected, setSelected] = React.useState<number[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [order, setOrder] = useState<Order>("asc");
+  const [orderBy, setOrderBy] = useState<keyof ICurrency>("id");
+  const [selected, setSelected] = useState<number[]>([]);
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // const [currency, setCurrency] = React.useState<Data[]>([])
-
-  React.useEffect(() => {
-    axios.get("http://localhost:8000/api/v2/currency/")
+  useEffect(() => {
+    // filterCurrency();
+    axiosV2
+      .get("currency/")
       .then((response) => {
         setCurrency(response.data);
+        console.log(response.data);
       })
-      .catch((response) =>{
-        console.log(response.message)
-      })  
+      .catch((response) => {
+        console.log(response);
+      });
   },[])
 
   function handleRequestSort (
@@ -141,7 +150,7 @@ export default function ListCurrency(props: Props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - currency.length) : 0;
 
-  const visibleRows = React.useMemo(
+  const visibleRows = useMemo(
     () =>
       stableSort<ICurrency>(currency, getComparator<keyof ICurrency>(order, orderBy)).slice(
         page * rowsPerPage,
@@ -206,12 +215,15 @@ export default function ListCurrency(props: Props) {
                     </TableCell>
                     <TableCell align="left">{moeda.description}</TableCell>
                     <TableCell align="right">{moeda.rating}</TableCell>
-                    <TableCell align="left"
-                      
-                    
-                    ><EditIcon/></TableCell>
-                    <TableCell align="left">
-                      <DeleteIcon/>
+                    <TableCell align="center">
+                      <Button onClick={() => setCurrencyUpdate(moeda)}>
+                        <EditIcon/>
+                      </Button>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Button color="error" onClick={() => deleteCurrency(moeda.id)}>
+                        <DeleteIcon/>
+                      </Button>
                     </TableCell>
                   </TableRow>
                 );

@@ -8,8 +8,7 @@ import {
   TextField,
   styled,
 } from "@mui/material";
-import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ICurrency } from "shared";
 import style from "./FormCurrency.module.scss";
 
@@ -18,40 +17,47 @@ const TextFieldStyled = styled(TextField)(() => ({
 }));
 
 interface Props {
-  currency: ICurrency[],
-  setCurrency: React.Dispatch<React.SetStateAction<ICurrency[]>>
+  currencyUpdate?: ICurrency | undefined,
+  setCurrencyUpdate: React.Dispatch<React.SetStateAction<ICurrency | undefined>>,
+  registerCurrency(code: string, description: string, rating: number): void,
+  updateCurrency(id: number, code: string, description: string, rating: number): void,
 }
 
 export default function FormCurrency(props: Props) {
-  const {currency, setCurrency} = props;
+  const {currencyUpdate, setCurrencyUpdate, registerCurrency, updateCurrency} = props;
 
   const [code, setCode] = useState("");
   const [description, setDescription] = useState("");
   const [rating, setRating] = useState(0);
 
-  const cadastrarMoeda = (event: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (currencyUpdate) {
+      setCode(currencyUpdate.code);
+      setDescription(currencyUpdate.description);
+      setRating(currencyUpdate.rating);
+    }
+  },[currencyUpdate]);
+
+  const limparCampos = () => {
+    setCode("");
+    setDescription("");
+    setRating(0);
+  }
+
+  const submitMoeda = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    axios.post("http://localhost:8000/api/v2/currency/",
-      {
-        code: code,
-        description: description,
-        rating: rating  
-      }
-    )
-      .then((response) => {
-        if (currency) {
-          setCurrency([...currency, response.data]);
-        }
-        else setCurrency(response.data);
-        alert("Moeda registrada com sucesso");
-      })
-      .catch((response) =>{
-        console.log(response.message)
-      })
+
+    if (currencyUpdate) {
+      updateCurrency(currencyUpdate.id, code, description, rating);
+      setCurrencyUpdate(undefined);
+    } else {
+      registerCurrency(code, description, rating);
+    }
+    limparCampos();
   };
 
   return (
-    <form onSubmit={(event) => cadastrarMoeda(event)}>
+    <form onSubmit={(event) => submitMoeda(event)}>
       <Stack direction="row" spacing={2}>
         <TextFieldStyled
           id="outlined-basic"
@@ -92,10 +98,10 @@ export default function FormCurrency(props: Props) {
             height: "40px",
             width: "100px",
             margin: "10px",
-            left: "0"
+            float: "right",
           }}
           >
-          Cadastrar
+          { currencyUpdate ? "Atualizar" : "Cadastrar" }
         </Button>
       </div>
     </form>

@@ -1,6 +1,5 @@
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import { CurrencyBitcoin, Home, Paid } from "@mui/icons-material";
+import {  Home, Paid } from "@mui/icons-material";
+import axios from "axios";
 
 export enum RoutesPath {
   Home = '/',
@@ -30,3 +29,7 @@ export interface ICurrency {
 
 export type Order = "asc" | "desc";
 
+export const axiosV2 = axios.create({
+  baseURL: "http://localhost:8000/api/v2/",
+  
+});

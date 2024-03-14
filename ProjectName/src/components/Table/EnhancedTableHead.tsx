@@ -11,7 +11,7 @@ interface HeadCell<T> {
   disablePadding: boolean;
   id: keyof T;
   label: string;
-  numeric: boolean;
+  align: string;
 }
 
 interface Props<T> {
@@ -61,7 +61,7 @@ export default function EnhancedTableHead<T>(props: Props<T>) {
         {headCells.map((headCell) => (
           <TableCell
             key={String(headCell.id)}
-            align={headCell.numeric ? "right" : "left"}
+            align={headCell.align as "center" | "left" | "right" | "justify" | "inherit" | undefined}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >

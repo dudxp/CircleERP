@@ -5,6 +5,8 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 
 interface EnhancedTableToolbarProps {
   selected: number[];
+  filterData?: () => void;
+  deleteData?: () => void;
 }
 
 export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
@@ -45,13 +47,13 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       )}
       {selected.length > 0 ? (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete" onClick={() => {console.log(selected.length)}}>
+          <IconButton aria-label="delete" onClick={() => {}}>
             <DeleteIcon/>
           </IconButton>
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
-          <IconButton>
+          <IconButton onClick={() => {}}>
             <FilterListIcon />
           </IconButton>
         </Tooltip>
