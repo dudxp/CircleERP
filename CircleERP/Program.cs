@@ -6,13 +6,18 @@ using System.Collections.Generic;
 
 var builder = WebApplication.CreateBuilder(args);
 
+string? connectionString = builder.Configuration.GetConnectionString("CircleERPConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+    throw new InvalidOperationException("A string de conexão 'CircleERPConnection' não foi encontrada ou é nula.");
+
 builder.Services.AddControllers();
 builder.Services.AddScoped<CurrencyService, CurrencyService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseLazyLoadingProxies()
-       .UseMySQL(builder.Configuration.GetConnectionString("CircleERPConnection"));
+       .UseMySQL(connectionString);
 });
 builder.Services.AddCors(options =>
 {
