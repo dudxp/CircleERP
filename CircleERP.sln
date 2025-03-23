@@ -1,0 +1,44 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircleERP", "CircleERP\CircleERP.csproj", "{0A0D1658-073D-C040-D291-7FF5FA8A405C}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "CircleERP.client", "CircleERP.client\CircleERP.client.esproj", "{45DE4253-7BB1-AA2C-6DE0-C2FD9AF67882}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircleERP.Model", "CircleERP.ServiceModel\CircleERP.Model.csproj", "{1BC4CF0D-AE52-5B73-3574-77D50CC86634}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircleERP.Tests", "CircleERP.Tests\CircleERP.Tests.csproj", "{0984277E-87C9-3BB0-E6F3-4E4FADF7F443}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A0D1658-073D-C040-D291-7FF5FA8A405C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A0D1658-073D-C040-D291-7FF5FA8A405C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A0D1658-073D-C040-D291-7FF5FA8A405C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A0D1658-073D-C040-D291-7FF5FA8A405C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45DE4253-7BB1-AA2C-6DE0-C2FD9AF67882}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45DE4253-7BB1-AA2C-6DE0-C2FD9AF67882}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45DE4253-7BB1-AA2C-6DE0-C2FD9AF67882}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{45DE4253-7BB1-AA2C-6DE0-C2FD9AF67882}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45DE4253-7BB1-AA2C-6DE0-C2FD9AF67882}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45DE4253-7BB1-AA2C-6DE0-C2FD9AF67882}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{1BC4CF0D-AE52-5B73-3574-77D50CC86634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BC4CF0D-AE52-5B73-3574-77D50CC86634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BC4CF0D-AE52-5B73-3574-77D50CC86634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BC4CF0D-AE52-5B73-3574-77D50CC86634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0984277E-87C9-3BB0-E6F3-4E4FADF7F443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0984277E-87C9-3BB0-E6F3-4E4FADF7F443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0984277E-87C9-3BB0-E6F3-4E4FADF7F443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0984277E-87C9-3BB0-E6F3-4E4FADF7F443}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02854F2A-8EF4-468E-80A3-CD64BBAF5D15}
+	EndGlobalSection
+EndGlobal
