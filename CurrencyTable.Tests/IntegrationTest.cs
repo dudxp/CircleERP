@@ -2,6 +2,7 @@ using Funq;
 using ServiceStack;
 using NUnit.Framework;
 using CurrencyTable.ServiceModel;
+using ServiceStack.Testing;
 
 namespace CurrencyTable.Tests;
 
@@ -12,6 +13,7 @@ public class IntegrationTest
 
     public IntegrationTest()
     {
+        appHost = new BasicAppHost().Init();
     }
 
     [OneTimeTearDown]
