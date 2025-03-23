@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/CurrencyTable/bin/Debug/net6.0/CurrencyTable.dll",
+            "program": "${workspaceFolder}/CircleERP/bin/Debug/net6.0/CircleERP.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/CurrencyTable",
+            "cwd": "${workspaceFolder}/CircleERP",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

@@ -10,10 +10,10 @@
 
     $ dotnet tool install -g x
 
-    $ x new react-spa CurrencyTable
+    $ x new react-spa CircleERP
 
-Alternatively write new project files directly into an empty repository, using the Directory Name as the CurrencyTable:
+Alternatively write new project files directly into an empty repository, using the Directory Name as the CircleERP:
 
-    $ git clone https://github.com/<User>/<CurrencyTable>.git
-    $ cd <CurrencyTable>
+    $ git clone https://github.com/<User>/<CircleERP>.git
+    $ cd <CircleERP>
     $ x new react-spa
