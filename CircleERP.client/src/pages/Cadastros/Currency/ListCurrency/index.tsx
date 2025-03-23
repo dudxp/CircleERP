@@ -99,7 +99,7 @@ export default function ListCurrency(props: Props) {
   },[])
 
   function handleRequestSort (
-    event: React.MouseEvent<unknown>,
+    _: React.MouseEvent<unknown>,
     property: keyof ICurrency
   ) {
     const isAsc = orderBy === property && order === "asc";
@@ -116,7 +116,7 @@ export default function ListCurrency(props: Props) {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+  const handleClick = (_: React.MouseEvent<unknown>, id: number) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected: number[] = [];
 
@@ -129,7 +129,7 @@ export default function ListCurrency(props: Props) {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
 
@@ -146,7 +146,6 @@ export default function ListCurrency(props: Props) {
 
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - currency.length) : 0;
 
@@ -177,7 +176,7 @@ export default function ListCurrency(props: Props) {
               onRequestSort={handleRequestSort}
               rowCount={currency.length}
               headCells={headCells}
-              checkBoxAriaLabel="Marcar todas as comidas"
+              checkBoxAriaLabel="Marcar todas"
             />
             <TableBody>
               {visibleRows.map((moeda, index) => {
