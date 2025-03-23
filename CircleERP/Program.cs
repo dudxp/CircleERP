@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string? connectionString = builder.Configuration.GetConnectionString("CircleERPConnection");
+string? connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
 
 if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("A string de conexão 'CircleERPConnection' não foi encontrada ou é nula.");
