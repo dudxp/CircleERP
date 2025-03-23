@@ -73,7 +73,7 @@ jobs:
           
       - name: Apply Production AppSettings
         if: env.HAS_APPSETTINGS_PATCH == 'true'
-        working-directory: ./ProjectName
+        working-directory: ./CurrencyTable
         run: | 
           cat <<EOF >> appsettings.json.patch
           ${{ secrets.APPSETTINGS_PATCH }}

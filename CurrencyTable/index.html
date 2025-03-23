@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<head>
+  <script type="module">
+    import { Buffer } from "buffer";
+    import process from "process";
+    window.Buffer = Buffer;
+    window.process = process;
+  </script>
+</head>
+<body>
+  <script type="module" src="/src/index.tsx"></script>
+  <div id="root"></div>
+</body>

@@ -8,12 +8,12 @@
 
     $ dotnet tool install -g x
 
-    $ x new react-spa ProjectName
+    $ x new react-spa CurrencyTable
 
-Alternatively write new project files directly into an empty repository, using the Directory Name as the ProjectName:
+Alternatively write new project files directly into an empty repository, using the Directory Name as the CurrencyTable:
 
-    $ git clone https://github.com/<User>/<ProjectName>.git
-    $ cd <ProjectName>
+    $ git clone https://github.com/<User>/<CurrencyTable>.git
+    $ cd <CurrencyTable>
     $ x new react-spa
 
 ## Development workflow

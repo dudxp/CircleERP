@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/ProjectName/bin/Debug/net6.0/ProjectName.dll",
+            "program": "${workspaceFolder}/CurrencyTable/bin/Debug/net6.0/CurrencyTable.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/ProjectName",
+            "cwd": "${workspaceFolder}/CurrencyTable",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

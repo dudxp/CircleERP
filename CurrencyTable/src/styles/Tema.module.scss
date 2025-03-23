@@ -1,0 +1,27 @@
+@use "variaveis";
+@use "breakpoints";
+
+.container {
+  padding: 50px variaveis.$padding-horizontal;
+  @media (max-width: breakpoints.$desktop_xsm) {
+    padding: 50px variaveis.$padding-horizontal-mobile;
+  }
+  @media (min-width: breakpoints.$desktop_xsm) and (max-width: breakpoints.$desktop_sm) {
+    padding: 50px variaveis.$padding-horizontal-sm;
+  }
+  @media (min-width: breakpoints.$desktop_sm) and (max-width: breakpoints.$desktop_md) {
+    padding: 50px variaveis.$padding-horizontal-md;
+  }
+}
+
+.titulo {
+  color: variaveis.$dark;
+  font-size: 3rem;
+  margin-bottom: 30px;
+}
+
+.logoCyncly {
+  height: auto;
+  width: 8rem;
+  align-self: auto;
+}
