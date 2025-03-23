@@ -2,9 +2,9 @@ import Temas from "@styles/Tema.module.scss";
 
 export const Logo = () => {
   return (
-    <img src="svg/svg-icons/coin.svg"
+    <img src="CircleERP2.png"
          alt="Logo moeda" 
-         className={Temas.logoCyncly} 
+         className={Temas.logoCircleERP} 
     />
   );
 };

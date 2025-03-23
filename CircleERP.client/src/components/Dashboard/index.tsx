@@ -35,8 +35,8 @@ export default function Dashboard() {
               display: "flex",
               alignItems: "center",
               justifyContent: "flex-end",
-              px: [1],
-              backgroundColor: "#454a4d"
+              px: [1]
+              // backgroundColor: "#454a4d"
             }}
           >
           <Logo/>
