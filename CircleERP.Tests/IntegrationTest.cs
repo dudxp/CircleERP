@@ -1,7 +1,7 @@
 using Funq;
 using ServiceStack;
 using NUnit.Framework;
-using CircleERP.Model.ServiceModel;
+using CircleERP.Model;
 using ServiceStack.Testing;
 
 namespace CircleERP.Tests;

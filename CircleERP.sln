@@ -4,7 +4,7 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircleERP", "CircleERP\CircleERP.csproj", "{0A0D1658-073D-C040-D291-7FF5FA8A405C}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "CircleERP.client", "CircleERP.client\CircleERP.client.esproj", "{45DE4253-7BB1-AA2C-6DE0-C2FD9AF67882}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "circleerp.client", "CircleERP.client\circleerp.client.esproj", "{45DE4253-7BB1-AA2C-6DE0-C2FD9AF67882}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircleERP.Model", "CircleERP.ServiceModel\CircleERP.Model.csproj", "{1BC4CF0D-AE52-5B73-3574-77D50CC86634}"
 EndProject

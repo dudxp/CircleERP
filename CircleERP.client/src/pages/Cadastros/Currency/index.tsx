@@ -3,29 +3,30 @@ import style from "./Currency.module.scss";
 import ListCurrency from "./ListCurrency";
 import { useState } from "react";
 import { ICurrency, axiosV2 } from "@shared/mainConfig";
+import { AxiosRequestConfig } from "axios";
 
 export default function Currency() {
   const [currency, setCurrency] = useState<ICurrency[]>([]);
   const [currencyUpdate, setCurrencyUpdate] = useState<ICurrency | undefined>();
 
-  // const filterCurrency = (options: AxiosRequestConfig = {}) => {
-  //   axiosV2
-  //     .get("currency/",options)
-  //     .then((response) => {
-  //       setCurrency(response.data);
-  //     })
-  //     .catch((response) => {
-  //       console.log(response.data);
-  //     });
-  // }
+  const filterCurrency = (options: AxiosRequestConfig = {}) => {
+    axiosV2
+      .get("currency/", options)
+      .then((response) => {
+        setCurrency(response.data);
+      })
+      .catch((response) => {
+        console.log(response.data);
+      });
+  }
 
   const deleteCurrency = (id: number) => {
     const question = window.confirm("Deseja realmente deletar essa moeda?");
     if (question) {
       axiosV2
-        .delete(`currency/${id}/`)
+        .delete(`currency/delete-by-id/${id}/`)
         .then(() => {
-          alert("Currency deletada com sucesso!");
+          alert("Moeda deletada com sucesso!");
           setCurrency(currency.filter((currency) => currency.id !== id));
         })
         .catch((resposta) => {
@@ -53,10 +54,20 @@ export default function Currency() {
         rating: rating,
       })
       .then((response) => {
-        if (currency) {
-          setCurrency([...currency, response.data]);
-        } else setCurrency(response.data);
-        alert("Currency registrada com sucesso");
+        console.log(response.data);
+
+        if (response.data)
+        {
+          const newCurrency: ICurrency = {
+            id: response.data,
+            code,
+            description,
+            rating
+          };
+          setCurrency([...currency, newCurrency]);
+        }
+
+        alert("Moeda registrada com sucesso");
       })
       .catch((response) => {
         console.log(response.message);
@@ -86,7 +97,7 @@ export default function Currency() {
         });
 
         setCurrency(newCurrency);
-        alert("Currency atualizada com sucesso");
+        alert("Moeda atualizada com sucesso");
       })
       .catch((resposta) => {
         console.log(resposta.data);
@@ -106,6 +117,7 @@ export default function Currency() {
         setCurrency={setCurrency}
         deleteCurrency={deleteCurrency}
         setCurrencyUpdate={setCurrencyUpdate}
+        filterCurrency={filterCurrency}
       />
     </div>
   );

@@ -1,23 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Data.Odbc;
-using CircleERP.Model.Controllers.Currencys;
-using CircleERP.Model.ServiceModel.Model;
+using CircleERP.Model;
 
-namespace CircleERP.Model.ServiceModel.Data;
+namespace CircleERP.Model.Data;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> opt) : base(opt)
-    {
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        string connectionString = "";
-        OdbcConnection connection = new OdbcConnection(connectionString);
-
-        base.OnConfiguring(optionsBuilder);
-    }
+    public AppDbContext(DbContextOptions<AppDbContext> opt) : base(opt){}
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

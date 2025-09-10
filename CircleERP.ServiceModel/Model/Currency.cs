@@ -1,15 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CircleERP.Model.ServiceModel.Model;
+namespace CircleERP.Model;
 
 [Table("CURRENCY")]
 public class Currency
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("ID")]
     public int Id { get; set; }
 
-    [Key]
     [Required]
     [Column("CODE")]
     public string Code { get; set; }

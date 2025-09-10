@@ -1,8 +1,7 @@
-﻿namespace CircleERP.Model.ServiceModel.Data.Dto.Currency;
+﻿namespace CircleERP.Model.Data.Dto.Currency;
 
 public class UpdateCurrencyDto
 {
-    public string Code { get; set; }
     public string Description { get; set; }
-    public string Rating { get; set; }
+    public float Rating { get; set; }
 }

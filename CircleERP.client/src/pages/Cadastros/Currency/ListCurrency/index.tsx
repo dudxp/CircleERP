@@ -72,7 +72,7 @@ interface Props {
   setCurrency: React.Dispatch<React.SetStateAction<ICurrency[]>>,
   deleteCurrency(id: number): void
   setCurrencyUpdate: React.Dispatch<React.SetStateAction<ICurrency | undefined>>
-  // filterCurrency(): void;
+  filterCurrency(): ICurrency[] | void;
 }
 
 export default function ListCurrency(props: Props) {
@@ -90,7 +90,6 @@ export default function ListCurrency(props: Props) {
       .get("currency/")
       .then((response) => {
         setCurrency(response.data);
-        console.log(`${__APP_HOST__}:${__APP_PORT__}/api/`);
       })
       .catch((response) => {
         console.log("Log de erro: " + response.message);
@@ -197,8 +196,8 @@ export default function ListCurrency(props: Props) {
                         role="checkbox"
                         color="primary"
                         checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
+                        slotProps ={{
+                          input: { "aria-labelledby": labelId }
                         }}
                         onClick={(event) => handleClick(event, moeda.id)}
                       />
@@ -214,11 +213,15 @@ export default function ListCurrency(props: Props) {
                     </TableCell>
                     <TableCell align="left">{moeda.description}</TableCell>
                     <TableCell align="right">{moeda.rating}</TableCell>
+
+                    {/* Botão de atualizar */}
                     <TableCell align="center">
                       <Button onClick={() => setCurrencyUpdate(moeda)}>
                         <EditIcon/>
                       </Button>
                     </TableCell>
+
+                    {/* Botão de deletar */}
                     <TableCell align="center">
                       <Button color="error" onClick={() => deleteCurrency(moeda.id)}>
                         <DeleteIcon/>

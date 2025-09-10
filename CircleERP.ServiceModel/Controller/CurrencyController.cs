@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using CircleERP.Model.ServiceModel.Model;
+using CircleERP.Model;
 using System.Collections.Generic;
-using CircleERP.Model.Model.Services;
+using CircleERP.Model.Services;
+using CircleERP.Model.Data.Dto.Currency;
+using FluentResults;
 
 namespace CircleERP.Model.Controllers.Currencys;
 
@@ -14,6 +16,7 @@ public class CurrencyController : ControllerBase
     {
         _service = service;
     }
+
     /// <summary>
     /// Get a list of currencies.
     /// </summary>
@@ -22,11 +25,58 @@ public class CurrencyController : ControllerBase
     [ProducesResponseType(200, Type = typeof(IEnumerable<Currency>))]
     public IActionResult Get()
     {
-        // Your implementation to retrieve currencies from the database or other source
-        //List<CurrencyController> currencies = new List<CurrencyController>();
-
-        var currencys = _service.GetAllCurrency();
-
+        var currencys = _service.GetAllCurrencys();
         return Ok(currencys);
-    } 
+    }
+
+    [HttpPost]
+    public IActionResult Post([FromBody] CreateCurrencyDto currency)
+    {
+        Result<Currency> result = _service.PostCurrency(currency);
+
+        if (result.IsFailed)
+            return BadRequest(result.Errors);
+
+        return Ok(result.Value.Id);
+    }
+
+    [HttpPut("update-by-id/{id}")]
+    public IActionResult Put(int id, [FromBody] UpdateCurrencyDto currency)
+    {
+        Result result = _service.UpdateCurrency(id, currency);
+        if (result.IsFailed) 
+            return BadRequest(result.Errors);
+        
+        return Ok("Moeda atualizada com sucesso");
+    }
+
+    [HttpPut("update-by-code/{code}")]
+    public IActionResult Put(string code, [FromBody] UpdateCurrencyDto currency)
+    {
+        Result result = _service.UpdateCurrency(code, currency);
+        if (result.IsFailed)
+            return BadRequest(result.Errors);
+
+        return Ok("Moeda atualizada com sucesso");
+    }
+
+    [HttpDelete("delete-by-id/{id}")]
+    public IActionResult DeleteId(int id)
+    {
+        Result result = _service.DeleteCurrency(id);
+        if (result.IsFailed)
+            return BadRequest(result.Errors);
+
+        return Ok("Moeda deletada com sucesso");
+    }
+
+    [HttpDelete("delete-by-code/{code}")]
+    public IActionResult DeleteCode(string code)
+    {
+        Result result = _service.DeleteCurrency(code);
+        if (result.IsFailed)
+            return BadRequest(result.Errors);
+
+        return Ok("Moeda deletada com sucesso");
+    }
 }
