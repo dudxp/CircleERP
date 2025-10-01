@@ -6,9 +6,7 @@
 // import Inicio from "@pages/Inicio";
 // import Prato from "@pages/Prato";
 // import Sobre from "@pages/Sobre";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-import { RoutesPath } from "./shared/mainConfig";
+import { BrowserRouter as Router, Routes } from "react-router-dom";
 
 export default function AppRouter(){
   return (  

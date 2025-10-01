@@ -1,10 +1,7 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import style from "./Menu.module.scss";
-import { Logo } from "@components/logo";
 
 export default function Menu () {
-  const navigate = useNavigate();
-
   const rotas = [{
     label: "Início",
     to: "/"
