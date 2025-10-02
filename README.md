@@ -1,19 +1,37 @@
-# Tabela de moedas
+# CircleERP
 
-# react-spa
+## Descrição
 
-.NET 6.0 React Webpack App Template
+O **CircleERP** é uma aplicação de ERP (sistema integrado de gestão) híbrida que combina back-end em C# (.NET) e front-end em React + TypeScript.  
+O objetivo é demonstrar funcionalidades de controle comercial, integrações, e interface de usuário web interativa.
 
-[![](https://raw.githubusercontent.com/ServiceStack/Assets/master/csharp-templates/react-spa.png)](http://react-spa.web-templates.io/)
+Este projeto foi desenvolvido como parte de estudos pessoais e exercícios avançados, com foco em boas práticas de arquitetura, modularização e integração de camadas.
 
-> Browse [source code](https://github.com/NetCoreTemplates/react-spa), view live demo [react-spa.web-templates.io](http://react-spa.web-templates.io) and install with [dotnet-new](https://docs.servicestack.net/dotnet-new):
+No momento esse projeto só possui um módulo de moedas
 
-    $ dotnet tool install -g x
+---
 
-    $ x new react-spa CircleERP
+## Funcionalidades Principais
 
-Alternatively write new project files directly into an empty repository, using the Directory Name as the CircleERP:
+- Cadastro, consulta e atualização de entidades típicas de ERP (clientes, produtos, pedidos, etc).  
+- Integrações via APIs REST entre front-end e back-end.  
+- Interface SPA (Single Page Application) moderna com React + TypeScript.  
+- Testes automatizados (caso haja testes) para garantir qualidade do back-end.  
+- Organização modular: separação de camadas (client, service model, testes, etc.).
 
-    $ git clone https://github.com/<User>/<CircleERP>.git
-    $ cd <CircleERP>
-    $ x new react-spa
+---
+
+## Tecnologias Utilizadas
+
+| Camada        | Tecnologia / Ferramenta                 |
+|----------------|------------------------------------------|
+| Back-End        | C#, .NET 6, ASP.NET Core, APIs REST     |
+| Front-End       | React, TypeScript, Webpack              |
+| Banco de Dados  | (Adicionar aqui qual DB você usou: SQL Server, MySQL, etc) |
+| Testes          | (JUnit, xUnit, MSTest, ou ferramenta que usou) |
+| Ferramentas      | Git, Azure DevOps ou GitHub Actions, VSCode / IDE, Postman |
+
+---
+
+## Estrutura do Projeto
+
