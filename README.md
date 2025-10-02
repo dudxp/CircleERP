@@ -1,13 +1,15 @@
 # CircleERP
 
+## IMPORTANTE
+
+No primeiro momento esse projeto só possui um módulo de moedas
+
 ## Descrição
 
 O **CircleERP** é uma aplicação de ERP (sistema integrado de gestão) híbrida que combina back-end em C# (.NET) e front-end em React + TypeScript.  
 O objetivo é demonstrar funcionalidades de controle comercial, integrações, e interface de usuário web interativa.
 
 Este projeto foi desenvolvido como parte de estudos pessoais e exercícios avançados, com foco em boas práticas de arquitetura, modularização e integração de camadas.
-
-No momento esse projeto só possui um módulo de moedas
 
 ---
 
