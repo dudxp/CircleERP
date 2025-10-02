@@ -27,9 +27,9 @@ Este projeto foi desenvolvido como parte de estudos pessoais e exercícios avan�
 
 | Camada        | Tecnologia / Ferramenta                 |
 |----------------|------------------------------------------|
-| Back-End        | C#, .NET 6, ASP.NET Core, APIs REST     |
+| Back-End        | C#, .NET 9, ASP.NET Core, APIs REST     |
 | Front-End       | React, TypeScript, Webpack              |
-| Banco de Dados  | (Adicionar aqui qual DB você usou: SQL Server, MySQL, etc) |
+| Banco de Dados  | MySql |
 | Testes          | (JUnit, xUnit, MSTest, ou ferramenta que usou) |
 | Ferramentas      | Git, Azure DevOps ou GitHub Actions, VSCode / IDE, Postman |
 
