@@ -30,5 +30,6 @@ export interface ICurrency {
 export type Order = "asc" | "desc";
 
 export const axiosV2 = axios.create({
+  
   baseURL: `${__BACKEND_HOST__}:${__BACKEND_PORT__}/api/`
 });
