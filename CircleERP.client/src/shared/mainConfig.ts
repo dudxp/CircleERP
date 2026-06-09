@@ -19,11 +19,6 @@ export const itemsList = [
     name: "Currency",
     path: "/currency",
     buttonIcon: Paid,
-  },
-  {
-    name: "Order",
-    path: "/order",
-    buttonIcon: 'OrderIcon',
   }
 ];
 

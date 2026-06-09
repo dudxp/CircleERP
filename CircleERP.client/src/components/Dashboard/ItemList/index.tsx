@@ -14,22 +14,12 @@ interface Props {
   buttonIcon: typeof SvgIcon | string;
 }
 
-import OrderIcon from "@assets/Icons/order.svg";
-
 export default function ItemList(props: Props) {
   const { name, path, buttonIcon: ButtonIcon } = props;
-
-  console.log("AQUIII");
-  console.log(OrderIcon);
 
   return (
     <React.Fragment>
       
-      <img 
-        src={OrderIcon} 
-        alt="Order"
-        style={{ width: "50px", height: "50px" }}
-      />
       <ListItem disablePadding>
         <ListItemButton
           component={Link}
