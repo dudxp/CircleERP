@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Data.Odbc;
-using CircleERP.Model;
 
 namespace CircleERP.Model.Data;
 

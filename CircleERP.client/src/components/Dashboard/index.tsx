@@ -10,6 +10,7 @@ import ItemList from "./ItemList";
 import { Container, List, createTheme, styled } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
 import { Logo } from "@components/logo";
+import Order from "@pages/Cadastros/Order";
 
 const DashboardDrawer = styled(Drawer)(
   () => ({
@@ -65,6 +66,7 @@ export default function Dashboard() {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Routes>
               <Route element={<Currency />} path={RoutesPath.Currency} />
+              <Route element={<Order />} path={RoutesPath.Order} />
             </Routes>
           </Container>
         </Box>

@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 using Microsoft.EntityFrameworkCore;
 using CircleERP.Model.Services;
 using CircleERP.Model.Data;
@@ -16,7 +16,7 @@ builder.Services.AddScoped<CurrencyService, CurrencyService>();
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseLazyLoadingProxies()
-       .UseMySQL(connectionString);
+       .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
 
 builder.Services.AddCors(options =>
@@ -28,13 +28,13 @@ builder.Services.AddCors(options =>
                .AllowAnyMethod();
     });
 });
+
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    c.SwaggerDoc("v1", info: new OpenApiInfo
     {
-        Title = "Currency API",
-        Version = "v1",
-        Description = "API for managing currencies",
+        Title = "CircleERP API",
+        Version = "v1"
     });
 });
 
@@ -44,7 +44,10 @@ var app = builder.Build();
 
 app.UseCors("AllowReactApp");
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CircleERP API v1");
+});
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();

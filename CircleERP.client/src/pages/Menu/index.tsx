@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import style from "./Menu.module.scss";
 
 export default function Menu () {
-  const rotas = [{
+  const rotas = 
+  [{
     label: "Início",
     to: "/"
   }, {
@@ -11,6 +12,9 @@ export default function Menu () {
   }, {
     label: "Sobre",
     to: "/sobre"
+  }, {
+    label: "Pedidos",
+    to: "/order"
   }];
   return (
     <nav className={style.menu}>
