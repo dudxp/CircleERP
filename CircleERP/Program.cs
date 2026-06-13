@@ -1,7 +1,7 @@
-﻿using Microsoft.OpenApi;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using CircleERP.Model.Services;
 using CircleERP.Model.Data;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,25 +29,14 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", info: new OpenApiInfo
-    {
-        Title = "CircleERP API",
-        Version = "v1"
-    });
-});
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
 //StartReactApp();
 
 app.UseCors("AllowReactApp");
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CircleERP API v1");
-});
+
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
@@ -57,5 +46,11 @@ app.UseEndpoints(endpoints =>
 {
     _ = endpoints.MapControllers();
 });
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
 app.Run();
