@@ -11,10 +11,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@components': resolveSrc('components'),
+      '@app': resolveSrc('app'),
+      '@features': resolveSrc('features'),
       '@shared': resolveSrc('shared'),
       '@styles': resolveSrc('styles'),
-      '@pages': resolveSrc('pages'),
       '@assets': resolveSrc('assets'),
     },
   },
