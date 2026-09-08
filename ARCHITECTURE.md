@@ -130,3 +130,34 @@ significa que limpar os dados faz parte de introduzir uma regra nova.
 Nomes de tabela e coluna sao minusculos, como no banco. Nesta maquina o MySQL
 roda com `lower_case_table_names=1` e a comparacao e insensivel, mas em Linux o
 padrao e `0` e `CURRENCY` nao encontraria `currency`.
+
+## Frontend
+
+O client segue a mesma ideia de camadas, organizado por feature em vez de por
+tipo de arquivo:
+
+```
+src/
+  app/         moldura da aplicacao, rotas, navegacao
+  shared/      cliente HTTP, tipos e componentes reutilizaveis
+  features/
+    currency/
+      api/     unico lugar que conhece as rotas de moeda
+      model/   tipos da feature
+      hooks/   estado de servidor (useCurrencies)
+      ui/      componentes
+    orders/
+```
+
+A regra pratica: **componente nao conhece axios, hook nao conhece MUI, funcao
+pura nao conhece nenhum dos dois.** Uma feature so importa de `shared/` e de si
+mesma; nunca de outra feature.
+
+`features/<nome>/api` traduz qualquer falha em `ApiError`, entao nenhum
+componente inspeciona status HTTP. E o hook e a fonte unica da lista: as
+operacoes de escrita recarregam do servidor em vez de reproduzir localmente o
+que o backend fez, o que evita a tela divergir do banco.
+
+Nao ha biblioteca de estado de servidor -- `useCurrencies` e escrito a mao. Se
+um dia o cache entre telas comecar a doer, o substituto natural e o TanStack
+Query, e o ponto de troca e o hook, nao os componentes.
