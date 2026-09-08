@@ -1,3 +1,5 @@
+using CircleERP.Application;
+using CircleERP.Infrastructure;
 using CircleERP.Model.Data;
 using CircleERP.Model.Services;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +27,11 @@ builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 
-builder.Services.AddScoped<CurrencyService>();
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(connectionString);
 
+// Legado: sai na Fase 2, junto com o projeto CircleERP.Model.
+builder.Services.AddScoped<CurrencyService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 

@@ -19,6 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CircleERP.Application\CircleERP.Application.csproj" />
+    <!-- Infrastructure entra apenas aqui, no composition root: nenhuma outra
+         camada pode enxergar EF Core ou MySQL. -->
+    <ProjectReference Include="..\CircleERP.Infrastructure\CircleERP.Infrastructure.csproj" />
+    <!-- Legado: sai na Fase 2, quando Currency migrar para as novas camadas. -->
     <ProjectReference Include="..\CircleERP.ServiceModel\CircleERP.Model.csproj" />
   </ItemGroup>
 
