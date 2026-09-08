@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircleERP.Infrastructure", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircleERP.Domain.Tests", "CircleERP.Domain.Tests\CircleERP.Domain.Tests.csproj", "{842D6D72-16F7-4962-A868-49E852ABB13A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircleERP.Api.IntegrationTests", "CircleERP.Api.IntegrationTests\CircleERP.Api.IntegrationTests.csproj", "{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,18 @@ Global
 		{842D6D72-16F7-4962-A868-49E852ABB13A}.Release|x64.Build.0 = Release|Any CPU
 		{842D6D72-16F7-4962-A868-49E852ABB13A}.Release|x86.ActiveCfg = Release|Any CPU
 		{842D6D72-16F7-4962-A868-49E852ABB13A}.Release|x86.Build.0 = Release|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Debug|x64.Build.0 = Debug|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Debug|x86.Build.0 = Debug|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Release|x64.ActiveCfg = Release|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Release|x64.Build.0 = Release|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Release|x86.ActiveCfg = Release|Any CPU
+		{AE775963-2E5C-44FC-AFCF-C3FD23B57A15}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

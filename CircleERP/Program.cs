@@ -56,3 +56,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.Run();
+
+/// <summary>
+/// Torna a classe gerada a partir dos top-level statements visivel para o
+/// <c>WebApplicationFactory</c> dos testes de integracao.
+/// </summary>
+public partial class Program;

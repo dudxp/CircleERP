@@ -79,9 +79,16 @@ negocio nele, e confirma via `IUnitOfWork`. Ele nao contem regra de negocio.
 | Projeto | Cobre |
 |---|---|
 | `CircleERP.Domain.Tests` | invariantes dos agregados e dos building blocks; sem I/O |
+| `CircleERP.Api.IntegrationTests` | a pilha completa por HTTP: rota, serializacao, handler, mapeamento e conversores |
 
-Os testes rodam sem banco, sem HTTP e sem container -- se um teste de dominio
+Os testes de dominio rodam sem banco, sem HTTP e sem container -- se um deles
 precisar de infraestrutura para rodar, a regra vazou de camada.
+
+Os de integracao sobem a API em memoria com `WebApplicationFactory` e trocam o
+MySQL por um SQLite em memoria, um por teste. Nao dependem de servidor externo
+nem de Docker, e por isso rodam no CI como qualquer outro teste. A ressalva e
+que SQLite nao e MySQL: comportamento especifico do provider (tipo de coluna,
+colacao) nao e verificado ali.
 
 A regra de dependencia hoje e garantida estruturalmente pelos
 `ProjectReference`. Se um dia for preciso verifica-la em teste (por exemplo,
