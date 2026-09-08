@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Camada mais interna da arquitetura.
+    Regra: este projeto NAO pode ter nenhum ProjectReference nem PackageReference.
+    Se voce precisar adicionar uma dependencia aqui, provavelmente o conceito
+    pertence a outra camada.
+  -->
+
+</Project>

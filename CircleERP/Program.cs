@@ -1,51 +1,53 @@
-﻿using Microsoft.EntityFrameworkCore;
-using CircleERP.Model.Services;
-using CircleERP.Model.Data;
+using CircleERP.Application;
+using CircleERP.Infrastructure;
+using CircleERP.Middleware;
 using Scalar.AspNetCore;
+
+const string CorsPolicy = "CircleErpClient";
 
 var builder = WebApplication.CreateBuilder(args);
 
-string? connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
+// A variavel de ambiente tem prioridade (container/deploy); em desenvolvimento use
+// `dotnet user-secrets set "ConnectionStrings:CircleERP" "<string>"`.
+var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING")
+                       ?? builder.Configuration.GetConnectionString("CircleERP");
 
-if (string.IsNullOrEmpty(connectionString))
-    throw new InvalidOperationException("A string de conexão 'CircleERPConnection' não foi encontrada ou é nula.");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "String de conexao ausente. Defina a variavel de ambiente MYSQL_CONNECTION_STRING " +
+        "ou a chave de configuracao 'ConnectionStrings:CircleERP'.");
+}
+
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<CurrencyService, CurrencyService>();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<DomainExceptionHandler>();
+builder.Services.AddOpenApi();
 
-builder.Services.AddDbContext<AppDbContext>(opt =>
-{
-    opt.UseLazyLoadingProxies()
-       .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-});
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(
+    connectionString,
+    builder.Configuration["Database:ServerVersion"]);
 
 builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReactApp", builder =>
-    {
-        builder.WithOrigins("http://localhost:54783")
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
-});
-
-builder.Services.AddOpenApi();
+    options.AddPolicy(CorsPolicy, policy => policy
+        .WithOrigins(allowedOrigins)
+        .AllowAnyHeader()
+        .AllowAnyMethod()));
 
 var app = builder.Build();
 
-//StartReactApp();
-
-app.UseCors("AllowReactApp");
-
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthorization();
-app.MapFallbackToFile("/index.html");
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.UseCors(CorsPolicy);
 
-app.UseEndpoints(endpoints =>
-{
-    _ = endpoints.MapControllers();
-});
+app.MapControllers();
+app.MapFallbackToFile("/index.html");
 
 if (app.Environment.IsDevelopment())
 {
@@ -54,3 +56,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.Run();
+
+/// <summary>
+/// Torna a classe gerada a partir dos top-level statements visivel para o
+/// <c>WebApplicationFactory</c> dos testes de integracao.
+/// </summary>
+public partial class Program;

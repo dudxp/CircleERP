@@ -1,0 +1,13 @@
+<Project>
+
+  <!-- Propriedades comuns a todos os projetos .NET da solucao.
+       A condicao evita que o projeto JavaScript (.esproj) herde TargetFramework. -->
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+</Project>

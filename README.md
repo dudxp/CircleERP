@@ -2,7 +2,7 @@
 
 ## IMPORTANTE
 
-No primeiro momento esse projeto só possui um módulo de moedas
+Módulos disponíveis: cadastro de moedas e pedidos de venda.
 
 ## Descrição
 
@@ -37,3 +37,44 @@ Este projeto foi desenvolvido como parte de estudos pessoais e exercícios avan�
 
 ## Estrutura do Projeto
 
+```
+CircleERP.Domain          agregados, value objects, eventos (zero dependencias)
+CircleERP.Application     casos de uso (MediatR), contratos de porta
+CircleERP.Infrastructure  EF Core, MySQL, repositorios
+CircleERP                 host da API: controllers, DI, middleware
+CircleERP.Domain.Tests    testes de dominio
+CircleERP.client          SPA em React + TypeScript (Vite)
+```
+
+Ver [ARCHITECTURE.md](ARCHITECTURE.md) para a regra de dependencia entre as camadas.
+
+---
+
+## Como rodar
+
+Requisitos: .NET 10 SDK, Node 22 e um MySQL acessivel.
+
+Configure a string de conexao (a variavel de ambiente tem prioridade):
+
+```bash
+dotnet user-secrets set "ConnectionStrings:CircleERP" "<sua-string>" --project CircleERP
+```
+
+Prepare o banco (o mesmo comando serve para banco novo e para o existente --
+ver [docs/database-baseline.md](docs/database-baseline.md)):
+
+```bash
+dotnet tool restore && dotnet ef database update --project CircleERP.Infrastructure --startup-project CircleERP.Infrastructure
+```
+
+Backend (https://localhost:5001, com Scalar em `/scalar`):
+
+```bash
+dotnet run --project CircleERP
+```
+
+Frontend (http://localhost:54783):
+
+```bash
+npm install --prefix CircleERP.client && npm run dev --prefix CircleERP.client
+```

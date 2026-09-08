@@ -1,5 +1,4 @@
 /// <reference types="vite/client" />
-declare const __APP_HOST__: string;
-declare const __APP_PORT__: string;
-declare const __BACKEND_HOST__: string;
-declare const __BACKEND_PORT__: string;
+
+/** URL base da API, injetada em tempo de build (ver `define` no vite.config.ts). */
+declare const __API_BASE_URL__: string;

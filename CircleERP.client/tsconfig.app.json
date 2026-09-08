@@ -23,10 +23,10 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
+      "@app/*": ["./src/app/*"],
+      "@features/*": ["./src/features/*"],
       "@shared/*": ["./src/shared/*"],
       "@styles/*": ["./src/styles/*"],
-      "@pages/*": ["./src/pages/*"],
       "@assets/*": ["./src/assets/*"]
     },
   },
