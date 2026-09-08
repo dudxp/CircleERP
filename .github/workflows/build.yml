@@ -10,17 +10,9 @@ jobs:
   backend:
     name: Backend (.NET)
     runs-on: ubuntu-latest
-    
-    services:
-        mysql:
-          image: mysql:8.0
-          env:
-            MYSQL_ROOT_PASSWORD: root_password
-            MYSQL_DATABASE: circle_erp_test
-          ports:
-            - 3306:3306
-          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
+    # Sem servico de banco de proposito: os testes de integracao usam SQLite em
+    # memoria e nao conectam em MySQL. Ver .github/workflows/README.md.
     steps:
       - uses: actions/checkout@v4
 
