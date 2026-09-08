@@ -183,7 +183,9 @@ src/
       model/   tipos da feature
       hooks/   estado de servidor (useCurrencies)
       ui/      componentes
+      index.ts entrada publica
     orders/
+    home/      visao geral; consome as outras features pelo index.ts delas
 ```
 
 A regra pratica: **componente nao conhece axios, hook nao conhece MUI, funcao

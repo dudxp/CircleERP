@@ -1,5 +1,6 @@
 import { ThemeProvider, createTheme } from "@mui/material";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HomePage from "@features/home/ui/HomePage";
 import CurrencyPage from "@features/currency/ui/CurrencyPage";
 import OrdersPage from "@features/orders/ui/OrdersPage";
 import OrderDetailPage from "@features/orders/ui/OrderDetailPage";
@@ -14,7 +15,7 @@ export default function App() {
       <BrowserRouter>
         <AppLayout>
           <Routes>
-            <Route path={RoutesPath.Home} element={<CurrencyPage />} />
+            <Route path={RoutesPath.Home} element={<HomePage />} />
             <Route path={RoutesPath.Currency} element={<CurrencyPage />} />
             <Route path={RoutesPath.Order} element={<OrdersPage />} />
             <Route path={RoutesPath.OrderDetail} element={<OrderDetailPage />} />
