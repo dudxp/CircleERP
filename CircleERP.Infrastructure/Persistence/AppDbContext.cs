@@ -1,6 +1,7 @@
 using System.Reflection;
 using CircleERP.Application.Abstractions.Persistence;
 using CircleERP.Domain.Currencies;
+using CircleERP.Domain.Orders;
 using Microsoft.EntityFrameworkCore;
 
 namespace CircleERP.Infrastructure.Persistence;
@@ -13,6 +14,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     : DbContext(options), IUnitOfWork
 {
     internal DbSet<Currency> Currencies => Set<Currency>();
+
+    internal DbSet<Order> Orders => Set<Order>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

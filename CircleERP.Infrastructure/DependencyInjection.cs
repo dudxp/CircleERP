@@ -1,7 +1,10 @@
 using CircleERP.Application.Abstractions.Persistence;
+using CircleERP.Application.Abstractions.Time;
 using CircleERP.Domain.Currencies;
+using CircleERP.Domain.Orders;
 using CircleERP.Infrastructure.Persistence;
 using CircleERP.Infrastructure.Persistence.Repositories;
+using CircleERP.Infrastructure.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,6 +35,9 @@ public static class DependencyInjection
 
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<AppDbContext>());
         services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+
+        services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 
         return services;
     }

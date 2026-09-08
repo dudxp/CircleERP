@@ -95,6 +95,43 @@ A regra de dependencia hoje e garantida estruturalmente pelos
 proibir `using` de namespaces de infraestrutura na Application), o caminho e
 adicionar `NetArchTest.Rules` ao projeto de testes.
 
+## Agregados
+
+### Currency
+
+Moeda aceita pelo sistema. `code` e o codigo ISO 4217; `symbol` e opcional e
+existe so para exibicao.
+
+### Order
+
+Pedido de venda. `OrderItem` e entidade interna: so existe atraves do pedido, e
+por isso nao ha repositorio de itens -- a linha e sempre carregada e salva junto
+da raiz.
+
+O que o agregado garante:
+
+| Invariante | Onde |
+|---|---|
+| itens so mudam enquanto o pedido esta em rascunho | `EnsureIsDraft` |
+| quantidade maior que zero | `Quantity` |
+| preco unitario nao negativo, com no maximo duas casas | `Money` |
+| toda linha esta na moeda do pedido | `AddItem` constroi o `Money` a partir da moeda da raiz |
+| pedido sem itens nao e confirmado | `Place` |
+| pedido cancelado nao volta atras | `Cancel` |
+
+O `Total` e uma propriedade calculada, nunca uma coluna: total gravado e total
+que pode divergir das linhas.
+
+O pedido guarda o **codigo** da moeda, e nao uma referencia ao agregado
+`Currency` nem uma chave estrangeira. Agregados referenciam outros agregados por
+identidade -- se o pedido carregasse a moeda inteira, um pedido antigo passaria
+a valer pela taxa de hoje. A regra "a moeda precisa estar cadastrada" e uma
+regra *entre* agregados, e por isso vive no caso de uso, nao no dominio.
+
+Confirmar e cancelar sao acoes, nao alteracoes de campo. Na API aparecem como
+`POST /api/orders/{id}/place` e `/cancel`, e nao como um `PATCH` em `status`:
+assim nao existe requisicao capaz de pular uma etapa do ciclo.
+
 ## Erros
 
 Sao duas coisas diferentes, e a borda trata cada uma de um jeito:
@@ -150,8 +187,12 @@ src/
 ```
 
 A regra pratica: **componente nao conhece axios, hook nao conhece MUI, funcao
-pura nao conhece nenhum dos dois.** Uma feature so importa de `shared/` e de si
-mesma; nunca de outra feature.
+pura nao conhece nenhum dos dois.**
+
+Uma feature importa livremente de `shared/` e de si mesma. Quando precisa de
+outra feature -- pedidos precisa da lista de moedas para o seletor -- importa
+apenas do `index.ts` dela, nunca de um caminho interno. Assim o que fica exposto
+e uma decisao explicita, e reorganizar as pastas de dentro nao quebra ninguem.
 
 `features/<nome>/api` traduz qualquer falha em `ApiError`, entao nenhum
 componente inspeciona status HTTP. E o hook e a fonte unica da lista: as

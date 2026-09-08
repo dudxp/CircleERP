@@ -5,7 +5,11 @@ export const RoutesPath = {
   Home: "/",
   Currency: "/currency",
   Order: "/order",
+  OrderDetail: "/order/:orderId",
 } as const;
+
+/** Monta a rota do detalhe de um pedido, para nao espalhar template de URL. */
+export const orderDetailPath = (orderId: number) => `/order/${orderId}`;
 
 export interface NavigationItem {
   label: string;

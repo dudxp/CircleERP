@@ -2,7 +2,7 @@
 
 ## IMPORTANTE
 
-No primeiro momento esse projeto só possui um módulo de moedas
+Módulos disponíveis: cadastro de moedas e pedidos de venda.
 
 ## Descrição
 
