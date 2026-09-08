@@ -86,9 +86,21 @@ precisar de infraestrutura para rodar, a regra vazou de camada.
 
 Os de integracao sobem a API em memoria com `WebApplicationFactory` e trocam o
 MySQL por um SQLite em memoria, um por teste. Nao dependem de servidor externo
-nem de Docker, e por isso rodam no CI como qualquer outro teste. A ressalva e
-que SQLite nao e MySQL: comportamento especifico do provider (tipo de coluna,
-colacao) nao e verificado ali.
+nem de Docker. A ressalva e que SQLite nao e MySQL: comportamento especifico do
+provider (tipo de coluna, colacao) nao e verificado ali.
+
+A fabrica de teste passa a string de conexao e a versao do servidor por
+**variavel de ambiente**, e nao por `ConfigureAppConfiguration`. Com hosting
+minimo, o que a fabrica registra em `ConfigureAppConfiguration` so e aplicado em
+`Build()` -- depois de os top-level statements do `Program.cs` ja terem lido
+`builder.Configuration`. Variavel de ambiente entra nas fontes padrao e chega a
+tempo.
+
+Para conferir que os testes nao dependem do ambiente da sua maquina:
+
+```bash
+env -u MYSQL_CONNECTION_STRING dotnet test CircleERP.sln
+```
 
 A regra de dependencia hoje e garantida estruturalmente pelos
 `ProjectReference`. Se um dia for preciso verifica-la em teste (por exemplo,

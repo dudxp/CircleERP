@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CircleERP.Api.IntegrationTests;
@@ -24,20 +24,42 @@ namespace CircleERP.Api.IntegrationTests;
 /// </remarks>
 public sealed class CircleErpApiFactory : WebApplicationFactory<Program>
 {
+    /// <summary>
+    /// Nunca e usado para conectar: existe so para o Program.cs conseguir
+    /// iniciar antes de o DbContext ser trocado por SQLite.
+    /// </summary>
+    private const string PlaceholderConnectionString =
+        "server=localhost;database=circleerp_test;user=test;password=test";
+
     private DbConnection? _connection;
+
+    /// <summary>
+    /// Fornece, por variavel de ambiente, a configuracao que o Program.cs le
+    /// antes de o host existir.
+    /// </summary>
+    /// <remarks>
+    /// Com hosting minimo, o que a fabrica registra em
+    /// <c>ConfigureAppConfiguration</c> so e aplicado em <c>Build()</c> -- ou
+    /// seja, depois de os top-level statements do Program.cs ja terem lido
+    /// <c>builder.Configuration</c> e lancado por falta de string de conexao.
+    /// Variaveis de ambiente, ao contrario, entram nas fontes padrao de
+    /// configuracao e chegam a tempo.
+    ///
+    /// `Database__ServerVersion` importa tanto quanto a string de conexao: sem
+    /// ele, <c>AddInfrastructure</c> cai no <c>ServerVersion.AutoDetect</c>, que
+    /// abre conexao com o MySQL durante a inicializacao.
+    /// </remarks>
+    protected override IHost CreateHost(IHostBuilder builder)
+    {
+        Environment.SetEnvironmentVariable("MYSQL_CONNECTION_STRING", PlaceholderConnectionString);
+        Environment.SetEnvironmentVariable("Database__ServerVersion", "5.7.40");
+
+        return base.CreateHost(builder);
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Development");
-
-        // O Program.cs exige uma string de conexao para iniciar. O valor nao e
-        // usado: o DbContext e substituido logo abaixo.
-        builder.ConfigureAppConfiguration((_, configuration) =>
-            configuration.AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ConnectionStrings:CircleERP"] = "server=localhost;database=test;user=test;password=test",
-                ["Database:ServerVersion"] = "5.7.40",
-            }));
 
         builder.ConfigureTestServices(services =>
         {
