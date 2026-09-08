@@ -6,4 +6,8 @@ namespace CircleERP.Application.Currencies.ChangeCurrency;
 /// O codigo nao entra: ele identifica a moeda. Trocar o codigo de uma moeda
 /// existente seria cadastrar outra moeda.
 /// </summary>
-public sealed record ChangeCurrencyCommand(int Id, string Description, decimal Rate) : ICommand;
+public sealed record ChangeCurrencyCommand(
+    int Id,
+    string Description,
+    decimal Rate,
+    string? Symbol = null) : ICommand;

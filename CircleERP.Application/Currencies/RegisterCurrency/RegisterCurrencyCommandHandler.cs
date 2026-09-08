@@ -21,7 +21,8 @@ internal sealed class RegisterCurrencyCommandHandler(
         var currency = Currency.Register(
             code,
             CurrencyDescription.Create(command.Description),
-            ExchangeRate.Create(command.Rate));
+            ExchangeRate.Create(command.Rate),
+            CurrencySymbol.CreateOrNull(command.Symbol));
 
         currencies.Add(currency);
 

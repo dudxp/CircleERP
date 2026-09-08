@@ -19,7 +19,7 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
                                ?? FallbackConnectionString;
 
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36)))
+            .UseMySql(connectionString, new MySqlServerVersion(new Version(5, 7, 40)))
             .Options;
 
         return new AppDbContext(options);

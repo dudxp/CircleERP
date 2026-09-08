@@ -40,6 +40,13 @@ const headCells: readonly HeadCell<ICurrency>[] = [
   },
   {
     kind: "sortable",
+    id: "symbol",
+    disablePadding: false,
+    label: "Símbolo",
+    align: "left",
+  },
+  {
+    kind: "sortable",
     id: "description",
     disablePadding: false,
     label: "Descrição",
@@ -213,6 +220,7 @@ export default function ListCurrency(props: Props) {
                     >
                       {moeda.code}
                     </TableCell>
+                    <TableCell align="left">{moeda.symbol ?? "—"}</TableCell>
                     <TableCell align="left">{moeda.description}</TableCell>
                     <TableCell align="right">{moeda.rate}</TableCell>
 

@@ -6,11 +6,15 @@ namespace CircleERP.Domain.Tests.Currencies;
 [TestFixture]
 public class CurrencyTests
 {
-    private static Currency Register(string code = "BRL", decimal rate = 1m) =>
+    private static Currency Register(
+        string code = "BRL",
+        decimal rate = 1m,
+        string? symbol = null) =>
         Currency.Register(
             CurrencyCode.Create(code),
             CurrencyDescription.Create("Real brasileiro"),
-            ExchangeRate.Create(rate));
+            ExchangeRate.Create(rate),
+            CurrencySymbol.CreateOrNull(symbol));
 
     [Test]
     public void Registrar_deixa_a_moeda_com_os_dados_informados()
@@ -62,6 +66,35 @@ public class CurrencyTests
         currency.ChangeRate(ExchangeRate.Create(3m));
 
         Assert.That(currency.DomainEvents, Is.Empty);
+    }
+
+    [Test]
+    public void Moeda_pode_existir_sem_simbolo()
+    {
+        Assert.That(Register().Symbol, Is.Null);
+    }
+
+    [Test]
+    public void Codigo_e_simbolo_sao_campos_independentes()
+    {
+        // O caso real do banco: "R$" e simbolo, "BRL" e o codigo ISO.
+        var currency = Register("BRL", symbol: "R$");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(currency.Code.Value, Is.EqualTo("BRL"));
+            Assert.That(currency.Symbol!.Value, Is.EqualTo("R$"));
+        });
+    }
+
+    [Test]
+    public void Alterar_o_simbolo_para_vazio_remove_o_simbolo()
+    {
+        var currency = Register("BRL", symbol: "R$");
+
+        currency.ChangeSymbol(CurrencySymbol.CreateOrNull(null));
+
+        Assert.That(currency.Symbol, Is.Null);
     }
 
     [Test]

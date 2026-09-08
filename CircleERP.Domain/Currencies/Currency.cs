@@ -17,11 +17,16 @@ public sealed class Currency : Entity<int>, IAggregateRoot
         Rate = null!;
     }
 
-    private Currency(CurrencyCode code, CurrencyDescription description, ExchangeRate rate)
+    private Currency(
+        CurrencyCode code,
+        CurrencyDescription description,
+        ExchangeRate rate,
+        CurrencySymbol? symbol)
     {
         Code = code;
         Description = description;
         Rate = rate;
+        Symbol = symbol;
     }
 
     public CurrencyCode Code { get; private set; }
@@ -30,6 +35,9 @@ public sealed class Currency : Entity<int>, IAggregateRoot
 
     public ExchangeRate Rate { get; private set; }
 
+    /// <summary>Simbolo de exibicao. Ausente quando nao se conhece um.</summary>
+    public CurrencySymbol? Symbol { get; private set; }
+
     /// <summary>
     /// Unica forma de criar uma moeda. Como os value objects ja validaram a si
     /// mesmos, nao existe instancia de <see cref="Currency"/> em estado invalido.
@@ -37,9 +45,10 @@ public sealed class Currency : Entity<int>, IAggregateRoot
     public static Currency Register(
         CurrencyCode code,
         CurrencyDescription description,
-        ExchangeRate rate)
+        ExchangeRate rate,
+        CurrencySymbol? symbol = null)
     {
-        var currency = new Currency(code, description, rate);
+        var currency = new Currency(code, description, rate, symbol);
 
         currency.Raise(new CurrencyRegistered(code.Value, DateTime.UtcNow));
 
@@ -47,6 +56,8 @@ public sealed class Currency : Entity<int>, IAggregateRoot
     }
 
     public void ChangeDescription(CurrencyDescription description) => Description = description;
+
+    public void ChangeSymbol(CurrencySymbol? symbol) => Symbol = symbol;
 
     public void ChangeRate(ExchangeRate rate)
     {

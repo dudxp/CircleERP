@@ -20,6 +20,7 @@ internal sealed class ChangeCurrencyCommandHandler(
 
         currency.ChangeDescription(CurrencyDescription.Create(command.Description));
         currency.ChangeRate(ExchangeRate.Create(command.Rate));
+        currency.ChangeSymbol(CurrencySymbol.CreateOrNull(command.Symbol));
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

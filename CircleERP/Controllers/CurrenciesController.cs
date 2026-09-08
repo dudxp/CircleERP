@@ -67,7 +67,7 @@ public sealed class CurrenciesController(ISender sender) : ControllerBase
         ChangeCurrencyRequest request,
         CancellationToken cancellationToken)
     {
-        var command = new ChangeCurrencyCommand(id, request.Description, request.Rate);
+        var command = new ChangeCurrencyCommand(id, request.Description, request.Rate, request.Symbol);
 
         var result = await sender.Send(command, cancellationToken);
 
@@ -90,4 +90,4 @@ public sealed class CurrenciesController(ISender sender) : ControllerBase
 /// Corpo do PUT. O id vem da rota, entao nao se repete aqui -- evita a
 /// ambiguidade de um id no corpo divergir do id da URL.
 /// </summary>
-public sealed record ChangeCurrencyRequest(string Description, decimal Rate);
+public sealed record ChangeCurrencyRequest(string Description, decimal Rate, string? Symbol);

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CircleERP.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260908160941_InitialCreate")]
+    [Migration("20260908162539_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -29,7 +29,7 @@ namespace CircleERP.Infrastructure.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("id");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
@@ -37,26 +37,31 @@ namespace CircleERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("varchar(3)")
-                        .HasColumnName("CODE");
+                        .HasColumnName("code");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)")
-                        .HasColumnName("DESCRIPTION");
+                        .HasColumnName("description");
 
                     b.Property<decimal>("Rate")
                         .HasPrecision(18, 6)
                         .HasColumnType("decimal(18,6)")
-                        .HasColumnName("RATING");
+                        .HasColumnName("rating");
+
+                    b.Property<string>("Symbol")
+                        .HasMaxLength(5)
+                        .HasColumnType("varchar(5)")
+                        .HasColumnName("symbol");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("IX_CURRENCY_CODE");
+                        .HasDatabaseName("IX_currency_code");
 
-                    b.ToTable("CURRENCY", (string)null);
+                    b.ToTable("currency", (string)null);
                 });
 #pragma warning restore 612, 618
         }

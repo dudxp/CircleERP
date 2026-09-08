@@ -27,6 +27,8 @@ export interface ICurrency {
   code: string;
   description: string;
   rate: number;
+  /** Simbolo de exibicao ("R$"). Ausente quando nao se conhece um. */
+  symbol: string | null;
 }
 
 export type Order = "asc" | "desc";

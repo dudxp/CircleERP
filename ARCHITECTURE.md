@@ -110,5 +110,14 @@ adotado por baseline -- ver [docs/database-baseline.md](docs/database-baseline.m
 
 O mapeamento fica em `IEntityTypeConfiguration`, nunca em atributos na entidade:
 o dominio nao carrega anotacao de persistencia. Value objects de um unico campo
-sao mapeados com `HasConversion`, entao `CODE` continua sendo uma coluna
+sao mapeados com `HasConversion`, entao `code` continua sendo uma coluna
 `varchar` comum no banco.
+
+O conversor roda **na leitura tambem**: um registro que nao passe na validacao
+do value object faz a consulta falhar. Isso e intencional -- e melhor descobrir
+que existe dado invalido do que carrega-lo para dentro do dominio -- mas
+significa que limpar os dados faz parte de introduzir uma regra nova.
+
+Nomes de tabela e coluna sao minusculos, como no banco. Nesta maquina o MySQL
+roda com `lower_case_table_names=1` e a comparacao e insensivel, mas em Linux o
+padrao e `0` e `CURRENCY` nao encontraria `currency`.

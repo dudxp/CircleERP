@@ -42,22 +42,32 @@ export default function Currency() {
 
   // A verificacao de codigo duplicado saiu daqui: quem decide e a API, que
   // responde 409. Duplicar a regra no cliente so cria duas versoes dela.
-  const registerCurrency = (code: string, description: string, rate: number) => {
+  const registerCurrency = (
+    code: string,
+    description: string,
+    rate: number,
+    symbol: string | null
+  ) => {
     axiosV2
-      .post<number>("currencies", { code, description, rate })
+      .post<number>("currencies", { code, description, rate, symbol })
       .then((response) => {
-        setCurrency([...currency, { id: response.data, code, description, rate }]);
+        setCurrency([...currency, { id: response.data, code, description, rate, symbol }]);
       })
       .catch((error) => alert(describeError(error)));
   };
 
-  const updateCurrency = (id: number, description: string, rate: number) => {
+  const updateCurrency = (
+    id: number,
+    description: string,
+    rate: number,
+    symbol: string | null
+  ) => {
     axiosV2
-      .put(`currencies/${id}`, { description, rate })
+      .put(`currencies/${id}`, { description, rate, symbol })
       .then(() => {
         setCurrency(
           currency.map((item) =>
-            item.id === id ? { ...item, description, rate } : item
+            item.id === id ? { ...item, description, rate, symbol } : item
           )
         );
       })
