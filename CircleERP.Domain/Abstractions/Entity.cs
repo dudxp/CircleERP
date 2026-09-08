@@ -14,7 +14,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
     /// <summary>Construtor sem parametros exigido pelo EF Core na materializacao.</summary>
     protected Entity() => Id = default!;
 
-    public TId Id { get; protected init; }
+    public TId Id { get; protected set; }
 
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 

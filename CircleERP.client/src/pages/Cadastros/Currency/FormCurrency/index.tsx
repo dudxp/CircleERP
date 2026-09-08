@@ -19,8 +19,8 @@ const TextFieldStyled = styled(TextField)(() => ({
 interface Props {
   currencyUpdate?: ICurrency | undefined,
   setCurrencyUpdate: React.Dispatch<React.SetStateAction<ICurrency | undefined>>,
-  registerCurrency(code: string, description: string, rating: number): void,
-  updateCurrency(id: number, code: string, description: string, rating: number): void,
+  registerCurrency(code: string, description: string, rate: number): void,
+  updateCurrency(id: number, description: string, rate: number): void,
 }
 
 export default function FormCurrency(props: Props) {
@@ -28,30 +28,30 @@ export default function FormCurrency(props: Props) {
 
   const [code, setCode] = useState("");
   const [description, setDescription] = useState("");
-  const [rating, setRating] = useState(0);
+  const [rate, setRate] = useState(0);
 
   useEffect(() => {
     if (currencyUpdate) {
       setCode(currencyUpdate.code);
       setDescription(currencyUpdate.description);
-      setRating(currencyUpdate.rating);
+      setRate(currencyUpdate.rate);
     }
   },[currencyUpdate]);
 
   const limparCampos = () => {
     setCode("");
     setDescription("");
-    setRating(0);
+    setRate(0);
   }
 
   const submitMoeda = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (currencyUpdate) {
-      updateCurrency(currencyUpdate.id, code, description, rating);
+      updateCurrency(currencyUpdate.id, description, rate);
       setCurrencyUpdate(undefined);
     } else {
-      registerCurrency(code, description, rating);
+      registerCurrency(code, description, rate);
     }
     limparCampos();
   };
@@ -84,8 +84,8 @@ export default function FormCurrency(props: Props) {
             id="rating-cambio"
             placeholder="Taxa de câmbio"
             type="number"
-            value={rating}
-            onChange={(event) => setRating(Number(event.target.value))}
+            value={rate}
+            onChange={(event) => setRate(Number(event.target.value))}
             required
           />
         </FormControl>

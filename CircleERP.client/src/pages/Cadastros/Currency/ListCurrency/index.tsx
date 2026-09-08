@@ -47,7 +47,7 @@ const headCells: readonly HeadCell<ICurrency>[] = [
   },
   {
     kind: "sortable",
-    id: "rating",
+    id: "rate",
     disablePadding: false,
     label: "Taxa de câmbio",
     align: "right",
@@ -89,7 +89,7 @@ export default function ListCurrency(props: Props) {
 
   useEffect(() => {
     axiosV2
-      .get("currency/")
+      .get("currencies")
       .then((response) => {
         setCurrency(response.data);
       })
@@ -214,7 +214,7 @@ export default function ListCurrency(props: Props) {
                       {moeda.code}
                     </TableCell>
                     <TableCell align="left">{moeda.description}</TableCell>
-                    <TableCell align="right">{moeda.rating}</TableCell>
+                    <TableCell align="right">{moeda.rate}</TableCell>
 
                     {/* Botão de atualizar */}
                     <TableCell align="center">

@@ -26,7 +26,7 @@ export interface ICurrency {
   id: number;
   code: string;
   description: string;
-  rating: number;
+  rate: number;
 }
 
 export type Order = "asc" | "desc";

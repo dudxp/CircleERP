@@ -56,6 +56,17 @@ Regra pratica: **se um objeto pode existir em estado invalido, a modelagem esta
 errada.** Validacao de formato e faixa vive no construtor do value object, nao
 em `if`s espalhados por services.
 
+## Onde ficam os contratos
+
+As interfaces de repositorio (`ICurrencyRepository`) ficam no **dominio**, ao
+lado do agregado que elas carregam: quem define o que precisa saber sobre uma
+moeda e o dominio, e a infraestrutura apenas atende. Ja o `IUnitOfWork` fica na
+**Application**, porque transacao e uma preocupacao de orquestracao do caso de
+uso, nao uma regra de negocio.
+
+O `AppDbContext` implementa `IUnitOfWork`. Para as camadas de dentro, ele e
+apenas "algo que confirma alteracoes".
+
 ## Casos de uso
 
 Cada caso de uso e um `ICommand`/`IQuery` com um unico handler, despachado por
@@ -69,7 +80,35 @@ negocio nele, e confirma via `IUnitOfWork`. Ele nao contem regra de negocio.
 |---|---|
 | `CircleERP.Domain.Tests` | invariantes dos agregados e dos building blocks; sem I/O |
 
+Os testes rodam sem banco, sem HTTP e sem container -- se um teste de dominio
+precisar de infraestrutura para rodar, a regra vazou de camada.
+
 A regra de dependencia hoje e garantida estruturalmente pelos
 `ProjectReference`. Se um dia for preciso verifica-la em teste (por exemplo,
 proibir `using` de namespaces de infraestrutura na Application), o caminho e
 adicionar `NetArchTest.Rules` ao projeto de testes.
+
+## Erros
+
+Sao duas coisas diferentes, e a borda trata cada uma de um jeito:
+
+| Situacao | Como o dominio/aplicacao expressa | HTTP |
+|---|---|---|
+| Entrada viola uma invariante (codigo com 4 letras, taxa negativa) | `DomainException`, lancada pelo value object | 400 |
+| Recurso nao existe | `Result.Fail(NotFoundError)` | 404 |
+| Conflito com o estado atual (codigo ja cadastrado) | `Result.Fail(ConflictError)` | 409 |
+
+A traducao acontece em dois lugares unicos: `DomainExceptionHandler` para o
+primeiro caso e `ResultExtensions` para os demais. Nenhuma action repete essa
+decisao, e todas respondem em `ProblemDetails`.
+
+## Banco de dados
+
+O schema e gerenciado por migrations do EF Core, em
+`CircleERP.Infrastructure/Persistence/Migrations`. O banco existente foi
+adotado por baseline -- ver [docs/database-baseline.md](docs/database-baseline.md).
+
+O mapeamento fica em `IEntityTypeConfiguration`, nunca em atributos na entidade:
+o dominio nao carrega anotacao de persistencia. Value objects de um unico campo
+sao mapeados com `HasConversion`, entao `CODE` continua sendo uma coluna
+`varchar` comum no banco.

@@ -1,8 +1,6 @@
 using CircleERP.Application;
 using CircleERP.Infrastructure;
-using CircleERP.Model.Data;
-using CircleERP.Model.Services;
-using Microsoft.EntityFrameworkCore;
+using CircleERP.Middleware;
 using Scalar.AspNetCore;
 
 const string CorsPolicy = "CircleErpClient";
@@ -25,15 +23,13 @@ var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get
 
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<DomainExceptionHandler>();
 builder.Services.AddOpenApi();
 
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(connectionString);
-
-// Legado: sai na Fase 2, junto com o projeto CircleERP.Model.
-builder.Services.AddScoped<CurrencyService>();
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+builder.Services.AddInfrastructure(
+    connectionString,
+    builder.Configuration["Database:ServerVersion"]);
 
 builder.Services.AddCors(options =>
     options.AddPolicy(CorsPolicy, policy => policy

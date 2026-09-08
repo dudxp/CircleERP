@@ -3,7 +3,18 @@ import style from "./Currency.module.scss";
 import ListCurrency from "./ListCurrency";
 import { useState } from "react";
 import { ICurrency, axiosV2 } from "@shared/mainConfig";
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, isAxiosError } from "axios";
+
+/**
+ * Extrai a mensagem do ProblemDetails devolvido pela API. Antes o erro so ia
+ * para o console e o usuario nao ficava sabendo do que se tratava.
+ */
+function describeError(error: unknown): string {
+  if (isAxiosError(error)) {
+    return error.response?.data?.detail ?? error.message;
+  }
+  return "Erro inesperado.";
+}
 
 export default function Currency() {
   const [currency, setCurrency] = useState<ICurrency[]>([]);
@@ -11,97 +22,46 @@ export default function Currency() {
 
   const filterCurrency = (options: AxiosRequestConfig = {}) => {
     axiosV2
-      .get("currency/", options)
-      .then((response) => {
-        setCurrency(response.data);
-      })
-      .catch((response) => {
-        console.log(response.data);
-      });
-  }
+      .get<ICurrency[]>("currencies", options)
+      .then((response) => setCurrency(response.data))
+      .catch((error) => alert(describeError(error)));
+  };
 
   const deleteCurrency = (id: number) => {
-    const question = window.confirm("Deseja realmente deletar essa moeda?");
-    if (question) {
-      axiosV2
-        .delete(`currency/delete-by-id/${id}/`)
-        .then(() => {
-          alert("Moeda deletada com sucesso!");
-          setCurrency(currency.filter((currency) => currency.id !== id));
-        })
-        .catch((resposta) => {
-          console.log(resposta.data);
-        });
-    }
-  }
-
-  const registerCurrency = (
-    code: string,
-    description: string,
-    rating: number
-  ) => {
-    const existeMoeda = currency.find((currency) => currency.code === code);
-
-    if (existeMoeda) {
-      alert("Currency já cadastrada");
+    if (!window.confirm("Deseja realmente deletar essa moeda?")) {
       return;
     }
 
     axiosV2
-      .post("currency/", {
-        code: code,
-        description: description,
-        rating: rating,
+      .delete(`currencies/${id}`)
+      .then(() => {
+        setCurrency(currency.filter((item) => item.id !== id));
       })
-      .then((response) => {
-        console.log(response.data);
-
-        if (response.data)
-        {
-          const newCurrency: ICurrency = {
-            id: response.data,
-            code,
-            description,
-            rating
-          };
-          setCurrency([...currency, newCurrency]);
-        }
-
-        alert("Moeda registrada com sucesso");
-      })
-      .catch((response) => {
-        console.log(response.message);
-      });
+      .catch((error) => alert(describeError(error)));
   };
 
-  const updateCurrency = (
-    id: number,
-    code: string,
-    description: string,
-    rating: number
-  ) => {
+  // A verificacao de codigo duplicado saiu daqui: quem decide e a API, que
+  // responde 409. Duplicar a regra no cliente so cria duas versoes dela.
+  const registerCurrency = (code: string, description: string, rate: number) => {
     axiosV2
-      .put(`currency/${id}/`, {
-        code: code,
-        description: description,
-        rating: rating,
+      .post<number>("currencies", { code, description, rate })
+      .then((response) => {
+        setCurrency([...currency, { id: response.data, code, description, rate }]);
       })
-      .then(() => {
-        const newCurrency = currency.map((currency) => {
-          if (currency.id === id) {
-            currency.code = code;
-            currency.description = description;
-            currency.rating = rating;
-          }
-          return currency;
-        });
+      .catch((error) => alert(describeError(error)));
+  };
 
-        setCurrency(newCurrency);
-        alert("Moeda atualizada com sucesso");
+  const updateCurrency = (id: number, description: string, rate: number) => {
+    axiosV2
+      .put(`currencies/${id}`, { description, rate })
+      .then(() => {
+        setCurrency(
+          currency.map((item) =>
+            item.id === id ? { ...item, description, rate } : item
+          )
+        );
       })
-      .catch((resposta) => {
-        console.log(resposta.data);
-      });
+      .catch((error) => alert(describeError(error)));
   };
 
   return (
