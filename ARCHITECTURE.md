@@ -105,8 +105,10 @@ decisao, e todas respondem em `ProblemDetails`.
 ## Banco de dados
 
 O schema e gerenciado por migrations do EF Core, em
-`CircleERP.Infrastructure/Persistence/Migrations`. O banco existente foi
-adotado por baseline -- ver [docs/database-baseline.md](docs/database-baseline.md).
+`CircleERP.Infrastructure/Persistence/Migrations`. O banco que ja existia foi
+adotado pelas proprias migrations, sem passo manual: a `InitialCreate` usa
+`CREATE TABLE IF NOT EXISTS` e e no-op num banco que ja tem a tabela. Ver
+[docs/database-baseline.md](docs/database-baseline.md).
 
 O mapeamento fica em `IEntityTypeConfiguration`, nunca em atributos na entidade:
 o dominio nao carrega anotacao de persistencia. Value objects de um unico campo

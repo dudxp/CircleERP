@@ -60,8 +60,12 @@ Configure a string de conexao (a variavel de ambiente tem prioridade):
 dotnet user-secrets set "ConnectionStrings:CircleERP" "<sua-string>" --project CircleERP
 ```
 
-Prepare o banco seguindo [docs/database-baseline.md](docs/database-baseline.md)
-(ou, num banco novo, `dotnet ef database update --project CircleERP.Infrastructure --startup-project CircleERP.Infrastructure`).
+Prepare o banco (o mesmo comando serve para banco novo e para o existente --
+ver [docs/database-baseline.md](docs/database-baseline.md)):
+
+```bash
+dotnet tool restore && dotnet ef database update --project CircleERP.Infrastructure --startup-project CircleERP.Infrastructure
+```
 
 Backend (https://localhost:5001, com Scalar em `/scalar`):
 
