@@ -13,7 +13,9 @@ import {
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { useEffect, useMemo, useState } from "react";
-import EnhancedTableHead from "@components/Table/EnhancedTableHead";
+import EnhancedTableHead, {
+  type HeadCell,
+} from "@components/Table/EnhancedTableHead";
 import { ICurrency, Order, axiosV2 } from "@shared/mainConfig";
 import EnhancedTableToolbar from "@components/Table/EnhancedTableToolbar";
 import { getComparator, stableSort } from "@components/Table/TableFunctions";
@@ -21,49 +23,49 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import React from "react";
 
-const headCells = [
+const headCells: readonly HeadCell<ICurrency>[] = [
   {
+    kind: "sortable",
     id: "id",
-    numeric: true,
     disablePadding: true,
     label: "Id interno",
     align: "right",
   },
   {
+    kind: "sortable",
     id: "code",
-    numeric: false,
     disablePadding: false,
     label: "Código da moeda",
     align: "left",
   },
   {
+    kind: "sortable",
     id: "description",
-    numeric: false,
     disablePadding: false,
     label: "Descrição",
     align: "left",
   },
   {
+    kind: "sortable",
     id: "rating",
-    numeric: true,
     disablePadding: false,
-    label: "Taca de câmbio",
+    label: "Taxa de câmbio",
     align: "right",
   },
   {
+    kind: "action",
     id: "edit",
-    numeric: false,
     disablePadding: true,
     label: "Editar",
     align: "center",
   },
   {
+    kind: "action",
     id: "delete",
-    numeric: false,
     disablePadding: true,
     label: "Deletar",
     align: "center",
-  }
+  },
 ];
 
 //Ver como modificar
@@ -150,7 +152,7 @@ export default function ListCurrency(props: Props) {
 
   const visibleRows = useMemo(
     () =>
-      stableSort<ICurrency>(currency, getComparator<keyof ICurrency>(order, orderBy)).slice(
+      stableSort<ICurrency>(currency, getComparator<ICurrency>(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       ),

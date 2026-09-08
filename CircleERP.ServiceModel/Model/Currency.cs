@@ -20,12 +20,4 @@ public class Currency
 
     [Column("RATING")]
     public float Rating { get; set; }
-
-    //export interface ICurrency
-    //{
-    //    id: number,
-    //    code: string,
-    //    description: string,
-    //    rating: number
-    //}
 }
