@@ -5,6 +5,7 @@ import {
   Chip,
   CircularProgress,
   IconButton,
+  MenuItem,
   Paper,
   Snackbar,
   Stack,
@@ -19,10 +20,11 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatDateTime, formatMoney } from "@shared/lib/format";
 import { RoutesPath } from "@app/navigation";
+import { unitAbbreviation, useProducts } from "@features/products";
 import { useOrder } from "../hooks/useOrder";
 import { useNotice } from "@shared/hooks/useNotice";
 import { isEditable, orderStatusLabel, type OrderStatus } from "../model/order";
@@ -57,10 +59,25 @@ export default function OrderDetailPage() {
   } = useOrder(Number(orderId));
 
   const { notice, dismiss, run, isBusy } = useNotice();
+  const { products } = useProducts();
 
-  const [description, setDescription] = useState("");
+  const [productId, setProductId] = useState<number | "">("");
   const [quantity, setQuantity] = useState("1");
   const [unitPrice, setUnitPrice] = useState("0");
+
+  // Produto inativo nao entra em item novo -- a API recusaria com 409.
+  const sellableProducts = products.filter((product) => product.isActive);
+  const selectedProduct = sellableProducts.find((product) => product.id === productId);
+
+  // O preco do cadastro sugere a linha, mas so quando esta na moeda do pedido:
+  // converter valor e decisao comercial, nao multiplicacao escondida.
+  useEffect(() => {
+    if (!selectedProduct || !order) return;
+
+    setUnitPrice(
+      selectedProduct.currencyCode === order.currency ? String(selectedProduct.price) : "0"
+    );
+  }, [selectedProduct, order]);
 
   const handleAddItem = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -68,7 +85,7 @@ export default function OrderDetailPage() {
     const succeeded = await run(
       () =>
         addItem({
-          description,
+          productId: Number(productId),
           quantity: Number(quantity),
           unitPrice: Number(unitPrice),
         }),
@@ -76,7 +93,7 @@ export default function OrderDetailPage() {
     );
 
     if (succeeded) {
-      setDescription("");
+      setProductId("");
       setQuantity("1");
       setUnitPrice("0");
     }
@@ -135,13 +152,27 @@ export default function OrderDetailPage() {
           <form onSubmit={handleAddItem}>
             <Stack direction="row" spacing={2} alignItems="flex-start">
               <TextField
-                label="Descrição do item"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                slotProps={{ htmlInput: { maxLength: 200 } }}
+                select
+                label="Produto"
+                value={productId}
+                onChange={(event) => setProductId(Number(event.target.value))}
                 sx={{ flexGrow: 1 }}
+                disabled={!sellableProducts.length}
+                helperText={
+                  !sellableProducts.length
+                    ? "Cadastre um produto ativo primeiro"
+                    : selectedProduct && selectedProduct.currencyCode !== order.currency
+                      ? `Preço do cadastro está em ${selectedProduct.currencyCode}; informe o valor em ${order.currency}`
+                      : " "
+                }
                 required
-              />
+              >
+                {sellableProducts.map((product) => (
+                  <MenuItem key={product.id} value={product.id}>
+                    {product.sku} — {product.name} ({unitAbbreviation[product.unit]})
+                  </MenuItem>
+                ))}
+              </TextField>
               <TextField
                 label="Quantidade"
                 type="number"
@@ -163,7 +194,7 @@ export default function OrderDetailPage() {
               <Button
                 type="submit"
                 variant="contained"
-                disabled={isBusy}
+                disabled={isBusy || !sellableProducts.length}
                 sx={{ height: "56px" }}
               >
                 Adicionar

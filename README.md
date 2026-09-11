@@ -2,7 +2,7 @@
 
 ## IMPORTANTE
 
-Módulos disponíveis: clientes, endereços, moedas e pedidos de venda.
+Módulos disponíveis: clientes, endereços, produtos, moedas e pedidos de venda, com painel de indicadores.
 
 ## Descrição
 

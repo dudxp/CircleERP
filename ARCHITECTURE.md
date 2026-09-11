@@ -146,6 +146,19 @@ tela oferece vincular o que ja existe em vez de apenas recusar. E para isso que
 `ResultExtensions` copia os metadados do erro para a resposta: e o que separa um
 erro que o usuario le de um erro sobre o qual ele pode agir.
 
+### Product
+
+Produto vendavel. O `Sku` e a chave natural, normalizado em maiusculas e sem
+espacos -- espaco invisivel no codigo e fonte classica de duplicata. Indice
+unico no banco.
+
+O preco e um `Money`, ou seja, carrega a moeda junto: um produto cotado em BRL
+nao preenche sozinho a linha de um pedido em USD, porque converter valor e
+decisao comercial e nao multiplicacao escondida.
+
+Produto se inativa, nao se exclui. Reajustar o preco aqui nao mexe em pedido
+nenhum -- ver abaixo.
+
 ### Order
 
 Pedido de venda. `OrderItem` e entidade interna: so existe atraves do pedido, e
@@ -182,6 +195,21 @@ ativo" sao regras *entre* agregados, e por isso vivem no caso de uso.
 Confirmar e cancelar sao acoes, nao alteracoes de campo. Na API aparecem como
 `POST /api/orders/{id}/place` e `/cancel`, e nao como um `PATCH` em `status`:
 assim nao existe requisicao capaz de pular uma etapa do ciclo.
+
+## Relatorios
+
+O painel de pedidos le por `IOrderDashboardReader`, que **nao e um repositorio**:
+repositorio carrega e salva agregados inteiros, e ali nada e carregado nem
+alterado -- sao contagens e somas feitas no banco. Misturar as duas coisas
+encheria o `IOrderRepository` de metodos que nunca devolvem um `Order`.
+
+A agregacao acontece no banco, e nao somando em memoria a lista inteira de
+pedidos: assim o custo cresce com o cadastro, e o trafego nao.
+
+Os totais saem **separados por moeda**, nunca num numero unico. E a mesma regra
+que o `Money` impoe no dominio, agora valendo no relatorio. Por isso tambem os
+graficos de participacao contam *pedidos*, e nao valor: contagem atravessa
+moedas sem problema, valor nao.
 
 ## Erros
 

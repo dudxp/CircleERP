@@ -16,6 +16,8 @@ export interface OrderSummary {
 
 export interface OrderItem {
   id: number;
+  productId: number;
+  /** Nome do produto no momento da venda, nao o nome atual. */
   description: string;
   quantity: number;
   unitPrice: number;
@@ -42,8 +44,9 @@ export interface OpenOrderInput {
 }
 
 export interface AddOrderItemInput {
-  description: string;
+  productId: number;
   quantity: number;
+  /** Negociavel: o cadastro sugere, o vendedor decide. */
   unitPrice: number;
 }
 
