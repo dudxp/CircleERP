@@ -1,4 +1,3 @@
-import { ThemeProvider, createTheme } from "@mui/material";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "@features/home/ui/HomePage";
 import CurrencyPage from "@features/currency/ui/CurrencyPage";
@@ -8,13 +7,12 @@ import AddressesPage from "@features/addresses/ui/AddressesPage";
 import OrdersPage from "@features/orders/ui/OrdersPage";
 import OrderDetailPage from "@features/orders/ui/OrderDetailPage";
 import AppLayout from "./AppLayout";
+import { ThemeModeProvider } from "./theme/ThemeModeProvider";
 import { RoutesPath } from "./navigation";
-
-const theme = createTheme();
 
 export default function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeModeProvider>
       <BrowserRouter>
         <AppLayout>
           <Routes>
@@ -28,6 +26,6 @@ export default function App() {
           </Routes>
         </AppLayout>
       </BrowserRouter>
-    </ThemeProvider>
+    </ThemeModeProvider>
   );
 }

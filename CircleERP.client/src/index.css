@@ -78,11 +78,9 @@ body {
 	background: unset;
 }
 
+/* currentColor segue o texto do tema; cor fixa ficaria invisivel em algum deles. */
 ::-webkit-scrollbar-thumb {
 	border-radius: 4px;
-	background: #888;
-}
-
-::-webkit-scrollbar-thumb:hover {
-	background: #555;
+	background: currentColor;
+	opacity: 0.3;
 }

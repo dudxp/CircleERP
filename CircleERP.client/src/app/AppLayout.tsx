@@ -1,15 +1,7 @@
-import {
-  Box,
-  Container,
-  CssBaseline,
-  Divider,
-  Drawer,
-  List,
-  Toolbar,
-  styled,
-} from "@mui/material";
+import { Box, Container, Divider, Drawer, List, Toolbar, styled } from "@mui/material";
 import Logo from "@shared/ui/Logo";
 import NavItem from "./NavItem";
+import ThemeModeSelector from "./theme/ThemeModeSelector";
 import { navigationItems } from "./navigation";
 
 const SideDrawer = styled(Drawer)(() => ({
@@ -28,8 +20,6 @@ const SideDrawer = styled(Drawer)(() => ({
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <Box sx={{ display: "flex", flexDirection: "row" }}>
-      <CssBaseline />
-
       <SideDrawer variant="permanent">
         <Toolbar
           sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", px: [1] }}
@@ -42,15 +32,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <NavItem key={item.path} {...item} />
           ))}
         </List>
+
+        <Divider sx={{ mt: "auto" }} />
+        <Box sx={{ display: "flex", justifyContent: "center", py: 1 }}>
+          <ThemeModeSelector />
+        </Box>
       </SideDrawer>
 
       <Box
         component="main"
         sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.grey[100]
-              : theme.palette.grey[900],
+          // background.default vem da paleta escolhida; fixar em grey[100]
+          // ou grey[900] ignoraria os temas customizados.
+          backgroundColor: "background.default",
           flexGrow: 1,
           height: "100vh",
           overflow: "auto",

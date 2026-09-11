@@ -304,6 +304,26 @@ componente inspeciona status HTTP. E o hook e a fonte unica da lista: as
 operacoes de escrita recarregam do servidor em vez de reproduzir localmente o
 que o backend fez, o que evita a tela divergir do banco.
 
+### Temas
+
+`app/theme` guarda as paletas, o provider e o seletor. Sao seis escolhas, sendo
+que `system` nao e uma paleta: e a instrucao de seguir o `prefers-color-scheme`,
+resolvida em tempo de execucao e reagindo a mudanca do sistema operacional sem
+recarregar a pagina.
+
+A escolha fica no `localStorage` do navegador de quem usa, e nao no servidor: e
+preferencia de exibicao daquele dispositivo, nao dado do negocio. Toda leitura e
+escrita esta em `try/catch`, porque em janela anonima o acesso lanca -- e um
+tema nao e motivo para a aplicacao nao abrir.
+
+Contexto, provider e hook ficam em **tres arquivos**: exportar contexto ou hook
+do mesmo arquivo que exporta um componente desliga o fast refresh do Vite.
+
+O CSS do Bootstrap foi removido junto. Ele fixava fundo branco no `body` e
+brigaria com qualquer tema escuro; nenhuma classe dele era usada, so o import.
+Pelo mesmo motivo, a area de conteudo usa `background.default` da paleta em vez
+de um cinza fixo.
+
 Nao ha biblioteca de estado de servidor -- `useCurrencies` e escrito a mao. Se
 um dia o cache entre telas comecar a doer, o substituto natural e o TanStack
 Query, e o ponto de troca e o hook, nao os componentes.
