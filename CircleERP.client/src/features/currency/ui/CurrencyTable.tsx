@@ -174,6 +174,7 @@ export default function CurrencyTable({
             setPage(0);
           }}
           labelRowsPerPage="Linhas por página"
+          labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
         />
       </Paper>
     </Box>

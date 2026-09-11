@@ -115,18 +115,27 @@ export default function OrdersCharts({ dashboard }: Props) {
             width={420}
           />
 
-          <Box sx={{ minWidth: 220 }}>
+          <Box sx={{ minWidth: 260, maxWidth: 340, flexGrow: 1 }}>
             {slices.map((slice) => (
               <Stack
                 key={slice.label}
                 direction="row"
                 justifyContent="space-between"
+                spacing={2}
                 sx={{ py: 0.5 }}
               >
-                <Typography variant="body2" color="text.secondary">
+                {/* minWidth: 0 permite o truncamento; sem isso o nome longo
+                    empurra e encosta no numero. */}
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  noWrap
+                  title={slice.label}
+                  sx={{ minWidth: 0 }}
+                >
                   {slice.label}
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ flexShrink: 0 }}>
                   {slice.value} ({percentageOf(slice.value, total)})
                 </Typography>
               </Stack>
