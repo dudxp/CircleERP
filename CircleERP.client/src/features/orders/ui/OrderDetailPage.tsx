@@ -24,7 +24,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { formatDateTime, formatMoney } from "@shared/lib/format";
 import { RoutesPath } from "@app/navigation";
 import { useOrder } from "../hooks/useOrder";
-import { useNotice } from "../hooks/useNotice";
+import { useNotice } from "@shared/hooks/useNotice";
 import { isEditable, orderStatusLabel, type OrderStatus } from "../model/order";
 
 const statusColor: Record<OrderStatus, "default" | "success" | "error"> = {

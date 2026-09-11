@@ -1,9 +1,11 @@
-import { Home, Paid, ShoppingCart } from "@mui/icons-material";
+import { Home, LocationOn, Paid, People, ShoppingCart } from "@mui/icons-material";
 import type { SvgIconComponent } from "@mui/icons-material";
 
 export const RoutesPath = {
   Home: "/",
   Currency: "/currency",
+  Customer: "/customer",
+  Address: "/address",
   Order: "/order",
   OrderDetail: "/order/:orderId",
 } as const;
@@ -21,5 +23,7 @@ export interface NavigationItem {
 export const navigationItems: readonly NavigationItem[] = [
   { label: "Início", path: RoutesPath.Home, icon: Home },
   { label: "Moedas", path: RoutesPath.Currency, icon: Paid },
+  { label: "Clientes", path: RoutesPath.Customer, icon: People },
+  { label: "Endereços", path: RoutesPath.Address, icon: LocationOn },
   { label: "Pedidos", path: RoutesPath.Order, icon: ShoppingCart },
 ];

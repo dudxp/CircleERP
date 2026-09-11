@@ -2,7 +2,7 @@
 
 ## IMPORTANTE
 
-Módulos disponíveis: cadastro de moedas e pedidos de venda.
+Módulos disponíveis: clientes, endereços, moedas e pedidos de venda.
 
 ## Descrição
 

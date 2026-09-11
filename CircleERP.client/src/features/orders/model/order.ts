@@ -4,6 +4,8 @@ export type OrderStatus = "Draft" | "Placed" | "Cancelled";
 /** Pedido na listagem: sem as linhas. */
 export interface OrderSummary {
   id: number;
+  customerId: number;
+  /** Nome resolvido pela API a partir do cadastro. */
   customer: string;
   currency: string;
   status: OrderStatus;
@@ -23,6 +25,8 @@ export interface OrderItem {
 /** Pedido completo, com as linhas. */
 export interface Order {
   id: number;
+  customerId: number;
+  /** Nome resolvido pela API a partir do cadastro. */
   customer: string;
   currency: string;
   status: OrderStatus;
@@ -33,7 +37,7 @@ export interface Order {
 }
 
 export interface OpenOrderInput {
-  customer: string;
+  customerId: number;
   currencyCode: string;
 }
 

@@ -114,6 +114,32 @@ adicionar `NetArchTest.Rules` ao projeto de testes.
 Moeda aceita pelo sistema. `code` e o codigo ISO 4217; `symbol` e opcional e
 existe so para exibicao.
 
+### Customer
+
+Cliente. `Document` valida os digitos verificadores de CPF e CNPJ de verdade e
+guarda apenas digitos -- sem isso, "529.982.247-25" e "52998224725" seriam dois
+clientes. O indice unico no documento fecha a porta no banco.
+
+O tipo (pessoa fisica ou juridica) **acompanha o documento** e nunca e informado
+em paralelo: `SetDocument` escreve os dois juntos, entao nao existe caminho para
+um cliente marcado como PJ portando um CPF.
+
+Cliente nao se exclui, se inativa. Um cliente inativo nao recebe pedidos novos,
+mas continua existindo -- os pedidos antigos dele precisam seguir legiveis.
+
+### Address
+
+Endereco. Raiz de agregado propria, com cadastro e tela proprios: o mesmo
+endereco existe independente de haver cliente vinculado a ele.
+
+`StateCode` recusa qualquer par de letras que nao seja uma das 27 UFs -- "XX"
+tem o formato certo e mesmo assim nao e um estado. O numero e texto, porque
+"S/N" e "123A" sao numeros de endereco validos.
+
+O cliente referencia o endereco por identidade, sem chave estrangeira. Nada no
+banco impede excluir um endereco em uso, entao a integridade e garantida no caso
+de uso (`RemoveAddress` responde 409), e ha teste de integracao provando isso.
+
 ### Order
 
 Pedido de venda. `OrderItem` e entidade interna: so existe atraves do pedido, e
@@ -134,11 +160,18 @@ O que o agregado garante:
 O `Total` e uma propriedade calculada, nunca uma coluna: total gravado e total
 que pode divergir das linhas.
 
-O pedido guarda o **codigo** da moeda, e nao uma referencia ao agregado
-`Currency` nem uma chave estrangeira. Agregados referenciam outros agregados por
+O pedido guarda o **codigo** da moeda e o **id** do cliente, e nao referencias
+aos agregados nem chaves estrangeiras. Agregados referenciam outros agregados por
 identidade -- se o pedido carregasse a moeda inteira, um pedido antigo passaria
-a valer pela taxa de hoje. A regra "a moeda precisa estar cadastrada" e uma
-regra *entre* agregados, e por isso vive no caso de uso, nao no dominio.
+a valer pela taxa de hoje; se guardasse o nome do cliente, renomear o cliente
+deixaria uma copia velha dentro do pedido.
+
+O nome do cliente e resolvido na leitura, em uma consulta por listagem
+(`GetByIdsAsync`), e nao uma por pedido. Um pedido cujo cliente sumiu do cadastro
+vira "(cliente N)" em vez de quebrar a tela.
+
+As regras "a moeda precisa estar cadastrada" e "o cliente precisa existir e estar
+ativo" sao regras *entre* agregados, e por isso vivem no caso de uso.
 
 Confirmar e cancelar sao acoes, nao alteracoes de campo. Na API aparecem como
 `POST /api/orders/{id}/place` e `/cancel`, e nao como um `PATCH` em `status`:
@@ -196,9 +229,16 @@ src/
       hooks/   estado de servidor (useCurrencies)
       ui/      componentes
       index.ts entrada publica
+    customers/
+    addresses/ expoe tambem o AddressDialog, usado de dentro da tela de cliente
     orders/
     home/      visao geral; consome as outras features pelo index.ts delas
 ```
+
+Os campos do formulario de endereco vivem em um componente proprio
+(`AddressFormFields`) porque dois lugares cadastram endereco: a aba propria e o
+popup dentro da tela de cliente. Uma copia em cada lugar viraria duas telas
+divergindo com o tempo.
 
 A regra pratica: **componente nao conhece axios, hook nao conhece MUI, funcao
 pura nao conhece nenhum dos dois.**

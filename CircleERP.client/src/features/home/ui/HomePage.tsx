@@ -11,12 +11,16 @@ import {
   Typography,
 } from "@mui/material";
 import PaidIcon from "@mui/icons-material/Paid";
+import PeopleIcon from "@mui/icons-material/People";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useNavigate } from "react-router-dom";
 import { formatMoney } from "@shared/lib/format";
 import { RoutesPath } from "@app/navigation";
 import { useCurrencies } from "@features/currency";
 import { useOrders, type OrderSummary } from "@features/orders";
+import { useCustomers } from "@features/customers";
+import { useAddresses } from "@features/addresses";
 
 /**
  * Total confirmado, agrupado por moeda.
@@ -48,9 +52,24 @@ export default function HomePage() {
 
   const { orders, isLoading: isLoadingOrders, loadError: ordersError } = useOrders();
 
-  const isLoading = isLoadingCurrencies || isLoadingOrders;
-  const loadError = currenciesError ?? ordersError;
+  const {
+    customers,
+    isLoading: isLoadingCustomers,
+    loadError: customersError,
+  } = useCustomers();
 
+  const {
+    addresses,
+    isLoading: isLoadingAddresses,
+    loadError: addressesError,
+  } = useAddresses();
+
+  const isLoading =
+    isLoadingCurrencies || isLoadingOrders || isLoadingCustomers || isLoadingAddresses;
+
+  const loadError = currenciesError ?? ordersError ?? customersError ?? addressesError;
+
+  const activeCustomers = customers.filter((customer) => customer.isActive).length;
   const drafts = orders.filter((order) => order.status === "Draft").length;
   const placed = orders.filter((order) => order.status === "Placed").length;
   const totals = placedTotalsByCurrency(orders);
@@ -77,7 +96,9 @@ export default function HomePage() {
       ) : (
         <>
           <Stack direction="row" spacing={2} sx={{ mb: 3 }} flexWrap="wrap" useFlexGap>
-            <Stat label="Moedas cadastradas" value={currencies.length} />
+            <Stat label="Clientes ativos" value={activeCustomers} />
+            <Stat label="Moedas" value={currencies.length} />
+            <Stat label="Endereços" value={addresses.length} />
             <Stat label="Pedidos" value={orders.length} />
             <Stat label="Em rascunho" value={drafts} />
             <Stat label="Confirmados" value={placed} />
@@ -115,6 +136,18 @@ export default function HomePage() {
       )}
 
       <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+        <Shortcut
+          icon={<PeopleIcon fontSize="large" />}
+          title="Clientes"
+          description="Cadastre os clientes e vincule o endereço de cada um."
+          onClick={() => navigate(RoutesPath.Customer)}
+        />
+        <Shortcut
+          icon={<LocationOnIcon fontSize="large" />}
+          title="Endereços"
+          description="Mantenha os endereços usados pelos clientes."
+          onClick={() => navigate(RoutesPath.Address)}
+        />
         <Shortcut
           icon={<PaidIcon fontSize="large" />}
           title="Moedas"

@@ -20,8 +20,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatDateTime, formatMoney } from "@shared/lib/format";
 import { useCurrencies } from "@features/currency";
+import { useCustomers } from "@features/customers";
 import { useOrders } from "../hooks/useOrders";
-import { useNotice } from "../hooks/useNotice";
+import { useNotice } from "@shared/hooks/useNotice";
 import { orderDetailPath } from "@app/navigation";
 import { orderStatusLabel, type OrderStatus } from "../model/order";
 
@@ -43,9 +44,10 @@ export default function OrdersPage() {
   // Uma unica chamada: dois usos do hook seriam duas buscas da mesma lista.
   const { orders, isLoading, loadError, open } = useOrders();
   const { currencies, isLoading: isLoadingCurrencies } = useCurrencies();
+  const { customers, isLoading: isLoadingCustomers } = useCustomers();
   const { notice, dismiss, run, isBusy } = useNotice();
 
-  const [customer, setCustomer] = useState("");
+  const [customerId, setCustomerId] = useState<number | "">("");
   const [currencyCode, setCurrencyCode] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -54,7 +56,7 @@ export default function OrdersPage() {
     let openedId: number | null = null;
 
     const succeeded = await run(async () => {
-      openedId = await open({ customer, currencyCode });
+      openedId = await open({ customerId: Number(customerId), currencyCode });
     }, "Pedido aberto. Adicione os itens.");
 
     if (succeeded && openedId !== null) {
@@ -63,6 +65,12 @@ export default function OrdersPage() {
   };
 
   const hasCurrencies = currencies.length > 0;
+
+  // Cliente inativo nao recebe pedido novo -- a API recusaria com 409, entao a
+  // tela nem o oferece. Quem decide continua sendo o servidor.
+  const activeCustomers = customers.filter((customer) => customer.isActive);
+  const hasCustomers = activeCustomers.length > 0;
+  const canOpen = hasCurrencies && hasCustomers;
 
   return (
     <Box>
@@ -74,13 +82,25 @@ export default function OrdersPage() {
         <form onSubmit={handleSubmit}>
           <Stack direction="row" spacing={2} alignItems="flex-start">
             <TextField
+              select
               label="Cliente"
-              value={customer}
-              onChange={(event) => setCustomer(event.target.value)}
-              slotProps={{ htmlInput: { maxLength: 120 } }}
+              value={customerId}
+              onChange={(event) => setCustomerId(Number(event.target.value))}
               sx={{ flexGrow: 1 }}
+              disabled={isLoadingCustomers || !hasCustomers}
+              helperText={
+                !isLoadingCustomers && !hasCustomers
+                  ? "Cadastre um cliente ativo primeiro"
+                  : " "
+              }
               required
-            />
+            >
+              {activeCustomers.map((customer) => (
+                <MenuItem key={customer.id} value={customer.id}>
+                  {customer.name} — {customer.formattedDocument}
+                </MenuItem>
+              ))}
+            </TextField>
 
             <TextField
               select
@@ -108,7 +128,7 @@ export default function OrdersPage() {
             <Button
               type="submit"
               variant="contained"
-              disabled={isBusy || !hasCurrencies}
+              disabled={isBusy || !canOpen}
               sx={{ height: "56px" }}
             >
               Abrir pedido
