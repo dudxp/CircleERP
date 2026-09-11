@@ -31,6 +31,7 @@ internal static class OrderMappings
     private static OrderItemResponse ToResponse(this OrderItem item) =>
         new(
             item.Id,
+            item.ProductId,
             item.Description.Value,
             item.Quantity.Value,
             item.UnitPrice.Amount,

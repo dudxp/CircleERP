@@ -27,6 +27,8 @@ public sealed record OrderResponse(
 
 public sealed record OrderItemResponse(
     int Id,
+    int ProductId,
+    /// <summary>Nome do produto no momento da venda, nao o nome atual.</summary>
     string Description,
     int Quantity,
     decimal UnitPrice,

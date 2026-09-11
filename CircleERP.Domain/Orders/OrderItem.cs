@@ -21,8 +21,13 @@ public sealed class OrderItem : Entity<int>
         UnitPrice = null!;
     }
 
-    internal OrderItem(ItemDescription description, Quantity quantity, Money unitPrice)
+    internal OrderItem(
+        int productId,
+        ItemDescription description,
+        Quantity quantity,
+        Money unitPrice)
     {
+        ProductId = productId;
         Description = description;
         Quantity = quantity;
         UnitPrice = unitPrice;
@@ -30,6 +35,17 @@ public sealed class OrderItem : Entity<int>
 
     public int OrderId { get; private set; }
 
+    /// <summary>Produto vendido, referenciado por identidade.</summary>
+    public int ProductId { get; private set; }
+
+    /// <summary>
+    /// Nome do produto no momento da venda.
+    /// </summary>
+    /// <remarks>
+    /// E uma copia, e nao uma leitura do cadastro: renomear um produto nao pode
+    /// reescrever o que um pedido antigo diz ter vendido. Mesmo raciocinio do
+    /// <see cref="UnitPrice"/>.
+    /// </remarks>
     public ItemDescription Description { get; private set; }
 
     public Quantity Quantity { get; private set; }

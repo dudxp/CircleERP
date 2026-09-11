@@ -4,6 +4,7 @@ using CircleERP.Domain.Addresses;
 using CircleERP.Domain.Currencies;
 using CircleERP.Domain.Customers;
 using CircleERP.Domain.Orders;
+using CircleERP.Domain.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace CircleERP.Infrastructure.Persistence;
@@ -22,6 +23,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     internal DbSet<Customer> Customers => Set<Customer>();
 
     internal DbSet<Address> Addresses => Set<Address>();
+
+    internal DbSet<Product> Products => Set<Product>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

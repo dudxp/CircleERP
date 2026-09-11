@@ -15,8 +15,14 @@ public class OrderTests
     private static Order Open(string currency = "BRL") =>
         Order.Open(CustomerId, CurrencyCode.Create(currency), Now);
 
+    private const int ProductId = 7;
+
     private static OrderItem AddItem(Order order, int quantity = 1, decimal unitPrice = 10m) =>
-        order.AddItem(ItemDescription.Create("Teclado"), Quantity.Create(quantity), unitPrice);
+        order.AddItem(
+            ProductId,
+            ItemDescription.Create("Teclado"),
+            Quantity.Create(quantity),
+            unitPrice);
 
     [Test]
     public void Pedido_nasce_em_rascunho_sem_itens_e_com_total_zero()
@@ -55,6 +61,22 @@ public class OrderTests
         // Nao existe caminho para uma linha em moeda diferente da do pedido:
         // o preco unitario e construido a partir da moeda da raiz.
         Assert.That(item.UnitPrice.Currency, Is.EqualTo(order.Currency));
+    }
+
+    [Test]
+    public void Item_congela_produto_e_nome_vendido()
+    {
+        // O nome e uma copia do momento da venda: renomear o produto depois nao
+        // pode reescrever o que este pedido diz ter vendido.
+        var order = Open();
+
+        var item = AddItem(order);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(item.ProductId, Is.EqualTo(ProductId));
+            Assert.That(item.Description.Value, Is.EqualTo("Teclado"));
+        });
     }
 
     [Test]

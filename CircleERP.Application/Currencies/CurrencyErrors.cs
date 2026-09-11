@@ -12,6 +12,9 @@ internal static class CurrencyErrors
     internal static Error NotFound(int id) =>
         new NotFoundError($"Moeda {id} nao encontrada.");
 
+    internal static Error NotFoundByCode(string code) =>
+        new NotFoundError($"Moeda {code} nao esta cadastrada.");
+
     internal static Error CodeAlreadyRegistered(string code) =>
         new ConflictError($"Ja existe uma moeda cadastrada com o codigo {code}.");
 }

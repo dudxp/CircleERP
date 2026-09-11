@@ -13,6 +13,7 @@ public class OrdersEndpointsTests
     private CircleErpApiFactory _factory = null!;
     private HttpClient _client = null!;
     private int _customerId;
+    private int _productId;
 
     [SetUp]
     public async Task SetUp()
@@ -30,6 +31,21 @@ public class OrdersEndpointsTests
         currency.EnsureSuccessStatusCode();
 
         _customerId = await RegisterCustomerAsync(ValidCpf);
+        _productId = await RegisterProductAsync();
+    }
+
+    private async Task<int> RegisterProductAsync(
+        string sku = "TEC-001",
+        string name = "Teclado",
+        decimal price = 10.00m)
+    {
+        var response = await _client.PostAsJsonAsync(
+            "/api/products",
+            new { sku, name, price, currencyCode = "BRL", unit = "Unit" });
+
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<int>();
     }
 
     private async Task<int> RegisterCustomerAsync(string document, string name = "Eduardo")
@@ -63,13 +79,13 @@ public class OrdersEndpointsTests
 
     private async Task<int> AddItemAsync(
         int orderId,
-        string description = "Teclado",
+        int? productId = null,
         int quantity = 1,
         decimal unitPrice = 10.00m)
     {
         var response = await _client.PostAsJsonAsync(
             $"/api/orders/{orderId}/items",
-            new { description, quantity, unitPrice });
+            new { productId = productId ?? _productId, quantity, unitPrice });
 
         response.EnsureSuccessStatusCode();
 
@@ -117,8 +133,9 @@ public class OrdersEndpointsTests
     {
         var id = await OpenOrderAsync();
 
-        await AddItemAsync(id, "Teclado", quantity: 3, unitPrice: 10.50m);
-        await AddItemAsync(id, "Mouse", quantity: 2, unitPrice: 4.25m);
+        await AddItemAsync(id, quantity: 3, unitPrice: 10.50m);
+        var mouseId = await RegisterProductAsync("MOU-001", "Mouse", 4.25m);
+        await AddItemAsync(id, mouseId, quantity: 2, unitPrice: 4.25m);
 
         var order = await GetOrderAsync(id);
 
@@ -168,7 +185,8 @@ public class OrdersEndpointsTests
     {
         var id = await OpenOrderAsync();
         var itemId = await AddItemAsync(id, unitPrice: 10.00m);
-        await AddItemAsync(id, "Mouse", unitPrice: 5.00m);
+        var mouseId = await RegisterProductAsync("MOU-001", "Mouse", 5.00m);
+        await AddItemAsync(id, mouseId, unitPrice: 5.00m);
 
         var response = await _client.DeleteAsync($"/api/orders/{id}/items/{itemId}");
 
@@ -225,7 +243,7 @@ public class OrdersEndpointsTests
 
         var response = await _client.PostAsJsonAsync(
             $"/api/orders/{id}/items",
-            new { description = "Monitor", quantity = 1, unitPrice = 100.00m });
+            new { productId = _productId, quantity = 1, unitPrice = 100.00m });
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
@@ -253,7 +271,7 @@ public class OrdersEndpointsTests
 
         var response = await _client.PostAsJsonAsync(
             $"/api/orders/{id}/items",
-            new { description = "Teclado", quantity, unitPrice = 10.00m });
+            new { productId = _productId, quantity, unitPrice = 10.00m });
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
@@ -265,7 +283,7 @@ public class OrdersEndpointsTests
 
         var response = await _client.PostAsJsonAsync(
             $"/api/orders/{id}/items",
-            new { description = "Teclado", quantity = 1, unitPrice = 10.999m });
+            new { productId = _productId, quantity = 1, unitPrice = 10.999m });
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }

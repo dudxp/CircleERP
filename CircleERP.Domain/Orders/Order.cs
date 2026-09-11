@@ -62,15 +62,26 @@ public sealed class Order : Entity<int>, IAggregateRoot
         new(customerId, currency, createdOnUtc);
 
     /// <summary>
-    /// Adiciona uma linha. O preco unitario e construido na moeda do pedido,
-    /// e nao recebido pronto -- assim nao existe caminho para uma linha em
-    /// moeda diferente da do pedido.
+    /// Adiciona uma linha.
     /// </summary>
-    public OrderItem AddItem(ItemDescription description, Quantity quantity, decimal unitPrice)
+    /// <remarks>
+    /// O preco unitario e construido na moeda do pedido, e nao recebido pronto
+    /// -- assim nao existe caminho para uma linha em moeda diferente da do
+    /// pedido.
+    ///
+    /// A descricao chega pronta em vez de ser lida do produto porque o agregado
+    /// nao alcanca outro agregado. Quem copia o nome do produto e o caso de uso,
+    /// no instante da venda.
+    /// </remarks>
+    public OrderItem AddItem(
+        int productId,
+        ItemDescription description,
+        Quantity quantity,
+        decimal unitPrice)
     {
         EnsureIsDraft("adicionar itens");
 
-        var item = new OrderItem(description, quantity, Money.Create(unitPrice, Currency));
+        var item = new OrderItem(productId, description, quantity, Money.Create(unitPrice, Currency));
         _items.Add(item);
 
         return item;

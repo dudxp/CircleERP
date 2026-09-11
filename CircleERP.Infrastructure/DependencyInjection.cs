@@ -1,11 +1,14 @@
 using CircleERP.Application.Abstractions.Persistence;
+using CircleERP.Application.Abstractions.Reporting;
 using CircleERP.Application.Abstractions.Time;
 using CircleERP.Application.Abstractions.ZipCodes;
 using CircleERP.Domain.Addresses;
 using CircleERP.Domain.Currencies;
 using CircleERP.Domain.Customers;
 using CircleERP.Domain.Orders;
+using CircleERP.Domain.Products;
 using CircleERP.Infrastructure.Persistence;
+using CircleERP.Infrastructure.Persistence.Reporting;
 using CircleERP.Infrastructure.Persistence.Repositories;
 using CircleERP.Infrastructure.ExternalServices;
 using CircleERP.Infrastructure.Time;
@@ -42,6 +45,10 @@ public static class DependencyInjection
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+
+        // Lado de leitura: agrega no banco, nao carrega agregados.
+        services.AddScoped<IOrderDashboardReader, OrderDashboardReader>();
 
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 

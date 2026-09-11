@@ -22,6 +22,16 @@ internal sealed class OrderItemConfiguration : IEntityTypeConfiguration<OrderIte
             .HasColumnName("order_id")
             .IsRequired();
 
+        // Sem chave estrangeira para product, pelo mesmo motivo de cliente e
+        // moeda: agregados se referenciam por identidade. Inativar um produto e
+        // o caminho previsto; excluir nao existe.
+        builder.Property(item => item.ProductId)
+            .HasColumnName("product_id")
+            .IsRequired();
+
+        builder.HasIndex(item => item.ProductId)
+            .HasDatabaseName("IX_order_item_product_id");
+
         builder.Property(item => item.Description)
             .HasColumnName("description")
             .HasMaxLength(ItemDescription.MaxLength)
@@ -30,12 +40,13 @@ internal sealed class OrderItemConfiguration : IEntityTypeConfiguration<OrderIte
                 description => description.Value,
                 value => ItemDescription.Create(value));
 
-        builder.Property(item => item.Quantity)
-            .HasColumnName("quantity")
-            .IsRequired()
-            .HasConversion(
-                quantity => quantity.Value,
-                value => Quantity.Create(value));
+        // Propriedade complexa, e nao conversor: com conversor o `Value` nao e
+        // um membro mapeado, e a consulta do painel (soma de preco vezes
+        // quantidade) nao traduz para SQL. A coluna gerada e a mesma.
+        builder.ComplexProperty(item => item.Quantity, quantity =>
+            quantity.Property(value => value.Value)
+                .HasColumnName("quantity")
+                .IsRequired());
 
         // Money e quantia mais moeda. A moeda e sempre a do pedido -- guardar
         // as duas colunas mantem a linha legivel sozinha, sem juntar com o

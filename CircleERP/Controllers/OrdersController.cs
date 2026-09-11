@@ -4,9 +4,11 @@ using CircleERP.Application.Orders.CancelOrder;
 using CircleERP.Application.Orders.ChangeOrderItemQuantity;
 using CircleERP.Application.Orders.GetOrderById;
 using CircleERP.Application.Orders.GetOrders;
+using CircleERP.Application.Orders.GetOrdersDashboard;
 using CircleERP.Application.Orders.OpenOrder;
 using CircleERP.Application.Orders.PlaceOrder;
 using CircleERP.Application.Orders.RemoveOrderItem;
+using CircleERP.Application.Abstractions.Reporting;
 using CircleERP.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +35,20 @@ public sealed class OrdersController(ISender sender) : ControllerBase
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var result = await sender.Send(new GetOrdersQuery(), cancellationToken);
+
+        return result.ToActionResult(this);
+    }
+
+    /// <summary>Numeros agregados dos pedidos, para o painel.</summary>
+    /// <remarks>
+    /// A agregacao acontece no banco: a tela recebe contagens e somas prontas,
+    /// e nao a lista de pedidos para somar em memoria.
+    /// </remarks>
+    [HttpGet("dashboard")]
+    [ProducesResponseType<OrderDashboard>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetDashboard(CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(new GetOrdersDashboardQuery(), cancellationToken);
 
         return result.ToActionResult(this);
     }
@@ -77,7 +93,7 @@ public sealed class OrdersController(ISender sender) : ControllerBase
     {
         var command = new AddOrderItemCommand(
             id,
-            request.Description,
+            request.ProductId,
             request.Quantity,
             request.UnitPrice);
 
@@ -147,8 +163,14 @@ public sealed class OrdersController(ISender sender) : ControllerBase
     }
 }
 
-/// <summary>Corpo do POST de item. O id do pedido vem da rota.</summary>
-public sealed record AddOrderItemRequest(string Description, int Quantity, decimal UnitPrice);
+/// <summary>
+/// Corpo do POST de item. O id do pedido vem da rota.
+/// </summary>
+/// <remarks>
+/// Nao ha descricao: ela e copiada do produto no momento da venda. O preco
+/// entra porque e negociavel -- o cadastro sugere, o vendedor decide.
+/// </remarks>
+public sealed record AddOrderItemRequest(int ProductId, int Quantity, decimal UnitPrice);
 
 /// <summary>Corpo do PUT de item.</summary>
 public sealed record ChangeOrderItemQuantityRequest(int Quantity);
