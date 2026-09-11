@@ -8,7 +8,7 @@ namespace CircleERP.Domain.Orders.Events;
 /// </summary>
 public sealed record OrderPlaced(
     int OrderId,
-    string Customer,
+    int CustomerId,
     string Currency,
     decimal Total,
     DateTime OccurredOnUtc) : IDomainEvent;

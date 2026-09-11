@@ -2,6 +2,8 @@ using CircleERP.Application.Abstractions.Messaging;
 using CircleERP.Application.Abstractions.Persistence;
 using CircleERP.Application.Abstractions.Time;
 using CircleERP.Domain.Currencies;
+using CircleERP.Domain.Customers;
+using CircleERP.Application.Customers;
 using CircleERP.Domain.Orders;
 using FluentResults;
 
@@ -10,6 +12,7 @@ namespace CircleERP.Application.Orders.OpenOrder;
 internal sealed class OpenOrderCommandHandler(
     IOrderRepository orders,
     ICurrencyRepository currencies,
+    ICustomerRepository customers,
     IDateTimeProvider dateTime,
     IUnitOfWork unitOfWork) : ICommandHandler<OpenOrderCommand, int>
 {
@@ -26,10 +29,17 @@ internal sealed class OpenOrderCommandHandler(
         if (currency is null)
             return Result.Fail<int>(OrderErrors.CurrencyNotRegistered(currencyCode.Value));
 
-        var order = Order.Open(
-            CustomerName.Create(command.Customer),
-            currencyCode,
-            dateTime.UtcNow);
+        // Cliente existir e estar ativo sao regras entre agregados: o pedido
+        // guarda so o id, entao quem confere e o caso de uso.
+        var customer = await customers.GetByIdAsync(command.CustomerId, cancellationToken);
+
+        if (customer is null)
+            return Result.Fail<int>(CustomerErrors.NotFound(command.CustomerId));
+
+        if (!customer.IsActive)
+            return Result.Fail<int>(CustomerErrors.Inactive(customer.Name.Value));
+
+        var order = Order.Open(customer.Id, currencyCode, dateTime.UtcNow);
 
         orders.Add(order);
 

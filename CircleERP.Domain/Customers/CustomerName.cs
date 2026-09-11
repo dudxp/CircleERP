@@ -1,15 +1,8 @@
 using CircleERP.Domain.Abstractions;
 
-namespace CircleERP.Domain.Orders;
+namespace CircleERP.Domain.Customers;
 
-/// <summary>
-/// Nome do cliente do pedido.
-/// </summary>
-/// <remarks>
-/// Texto livre, e nao referencia a um cadastro, porque nao existe modulo de
-/// clientes ainda. Quando existir, isto vira um <c>CustomerId</c> e o pedido
-/// passa a referenciar o agregado Cliente por identidade.
-/// </remarks>
+/// <summary>Nome ou razao social do cliente.</summary>
 public sealed class CustomerName : ValueObject
 {
     public const int MaxLength = 120;

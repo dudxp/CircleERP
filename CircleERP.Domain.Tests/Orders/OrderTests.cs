@@ -10,11 +10,10 @@ public class OrderTests
 {
     private static readonly DateTime Now = new(2026, 9, 8, 12, 0, 0, DateTimeKind.Utc);
 
+    private const int CustomerId = 42;
+
     private static Order Open(string currency = "BRL") =>
-        Order.Open(
-            CustomerName.Create("Eduardo"),
-            CurrencyCode.Create(currency),
-            Now);
+        Order.Open(CustomerId, CurrencyCode.Create(currency), Now);
 
     private static OrderItem AddItem(Order order, int quantity = 1, decimal unitPrice = 10m) =>
         order.AddItem(ItemDescription.Create("Teclado"), Quantity.Create(quantity), unitPrice);
@@ -26,6 +25,7 @@ public class OrderTests
 
         Assert.Multiple(() =>
         {
+            Assert.That(order.CustomerId, Is.EqualTo(CustomerId));
             Assert.That(order.Status, Is.EqualTo(OrderStatus.Draft));
             Assert.That(order.Items, Is.Empty);
             Assert.That(order.Total.Amount, Is.Zero);
@@ -113,6 +113,7 @@ public class OrderTests
             Assert.That(order.PlacedOnUtc, Is.EqualTo(Now));
             Assert.That(placed.Total, Is.EqualTo(15.00m));
             Assert.That(placed.Currency, Is.EqualTo("BRL"));
+            Assert.That(placed.CustomerId, Is.EqualTo(CustomerId));
         });
     }
 

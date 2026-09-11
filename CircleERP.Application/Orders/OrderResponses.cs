@@ -3,6 +3,8 @@ namespace CircleERP.Application.Orders;
 /// <summary>Pedido na listagem: sem os itens, que so a tela de detalhe usa.</summary>
 public sealed record OrderSummaryResponse(
     int Id,
+    int CustomerId,
+    /// <summary>Nome resolvido a partir do cadastro de clientes.</summary>
     string Customer,
     string Currency,
     string Status,
@@ -13,6 +15,8 @@ public sealed record OrderSummaryResponse(
 /// <summary>Pedido completo, com as linhas.</summary>
 public sealed record OrderResponse(
     int Id,
+    int CustomerId,
+    /// <summary>Nome resolvido a partir do cadastro de clientes.</summary>
     string Customer,
     string Currency,
     string Status,

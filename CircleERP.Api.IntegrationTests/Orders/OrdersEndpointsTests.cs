@@ -8,8 +8,11 @@ namespace CircleERP.Api.IntegrationTests.Orders;
 [TestFixture]
 public class OrdersEndpointsTests
 {
+    private const string ValidCpf = "52998224725";
+
     private CircleErpApiFactory _factory = null!;
     private HttpClient _client = null!;
+    private int _customerId;
 
     [SetUp]
     public async Task SetUp()
@@ -18,12 +21,26 @@ public class OrdersEndpointsTests
         _client = _factory.CreateClient();
         _factory.InitializeDatabase();
 
-        // Um pedido so pode ser aberto em uma moeda cadastrada.
-        var response = await _client.PostAsJsonAsync(
+        // Um pedido so pode ser aberto em uma moeda cadastrada e para um
+        // cliente cadastrado e ativo.
+        var currency = await _client.PostAsJsonAsync(
             "/api/currencies",
             new { code = "BRL", description = "Real brasileiro", rate = 1.0m, symbol = "R$" });
 
+        currency.EnsureSuccessStatusCode();
+
+        _customerId = await RegisterCustomerAsync(ValidCpf);
+    }
+
+    private async Task<int> RegisterCustomerAsync(string document, string name = "Eduardo")
+    {
+        var response = await _client.PostAsJsonAsync(
+            "/api/customers",
+            new { name, type = "Individual", document, addressId = (int?)null });
+
         response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<int>();
     }
 
     [TearDown]
@@ -33,11 +50,11 @@ public class OrdersEndpointsTests
         _factory.Dispose();
     }
 
-    private async Task<int> OpenOrderAsync(string currencyCode = "BRL")
+    private async Task<int> OpenOrderAsync(string currencyCode = "BRL", int? customerId = null)
     {
         var response = await _client.PostAsJsonAsync(
             "/api/orders",
-            new { customer = "Eduardo", currencyCode });
+            new { customerId = customerId ?? _customerId, currencyCode });
 
         response.EnsureSuccessStatusCode();
 
@@ -75,6 +92,8 @@ public class OrdersEndpointsTests
             Assert.That(order.Items, Is.Empty);
             Assert.That(order.Total, Is.Zero);
             Assert.That(order.Currency, Is.EqualTo("BRL"));
+            Assert.That(order.CustomerId, Is.EqualTo(_customerId));
+            Assert.That(order.Customer, Is.EqualTo("Eduardo"), "o nome vem resolvido do cadastro");
             Assert.That(order.PlacedOnUtc, Is.Null);
         });
     }
@@ -84,7 +103,7 @@ public class OrdersEndpointsTests
     {
         var response = await _client.PostAsJsonAsync(
             "/api/orders",
-            new { customer = "Eduardo", currencyCode = "JPY" });
+            new { customerId = _customerId, currencyCode = "JPY" });
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 
@@ -289,5 +308,43 @@ public class OrdersEndpointsTests
             Assert.That(order!.Items[0].UnitPrice, Is.EqualTo(12.34m));
             Assert.That(order.Currency, Is.EqualTo("BRL"));
         });
+    }
+
+    [Test]
+    public async Task Abrir_pedido_para_cliente_inexistente_devolve_404()
+    {
+        var response = await _client.PostAsJsonAsync(
+            "/api/orders",
+            new { customerId = 9999, currencyCode = "BRL" });
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+    }
+
+    [Test]
+    public async Task Abrir_pedido_para_cliente_inativo_devolve_409()
+    {
+        await _client.PostAsync($"/api/customers/{_customerId}/deactivate", null);
+
+        var response = await _client.PostAsJsonAsync(
+            "/api/orders",
+            new { customerId = _customerId, currencyCode = "BRL" });
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
+    }
+
+    [Test]
+    public async Task Renomear_o_cliente_reflete_nos_pedidos_existentes()
+    {
+        // O pedido guarda so o id: o nome e resolvido na leitura, entao nao
+        // existe copia do nome envelhecendo dentro do pedido.
+        var id = await OpenOrderAsync();
+
+        await _client.PutAsJsonAsync(
+            $"/api/customers/{_customerId}",
+            new { name = "Eduardo Silva", type = "Individual", document = ValidCpf, addressId = (int?)null });
+
+        var order = await GetOrderAsync(id);
+
+        Assert.That(order!.Customer, Is.EqualTo("Eduardo Silva"));
     }
 }

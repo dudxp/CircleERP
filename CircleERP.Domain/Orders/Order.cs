@@ -10,10 +10,13 @@ namespace CircleERP.Domain.Orders;
 /// nenhuma alteracao de item acontece sem passar por aqui.
 /// </summary>
 /// <remarks>
-/// A moeda e referenciada pelo <see cref="CurrencyCode"/>, e nao por uma
-/// instancia de <c>Currency</c>: agregados referenciam outros agregados por
-/// identidade, nunca por objeto. Se o pedido carregasse a moeda inteira, um
-/// pedido antigo passaria a valer pela taxa de hoje.
+/// Tanto o cliente quanto a moeda sao referenciados por identidade, e nao por
+/// objeto: agregados nunca carregam outros agregados por dentro. Se o pedido
+/// guardasse a moeda inteira, um pedido antigo passaria a valer pela taxa de
+/// hoje; se guardasse o cliente, renomear o cliente reescreveria o historico.
+///
+/// A regra "o cliente precisa existir e estar ativo" e uma regra *entre*
+/// agregados, e por isso vive no caso de uso, nao aqui.
 /// </remarks>
 public sealed class Order : Entity<int>, IAggregateRoot
 {
@@ -22,19 +25,19 @@ public sealed class Order : Entity<int>, IAggregateRoot
     /// <summary>Exigido pelo EF Core.</summary>
     private Order()
     {
-        Customer = null!;
         Currency = null!;
     }
 
-    private Order(CustomerName customer, CurrencyCode currency, DateTime createdOnUtc)
+    private Order(int customerId, CurrencyCode currency, DateTime createdOnUtc)
     {
-        Customer = customer;
+        CustomerId = customerId;
         Currency = currency;
         CreatedOnUtc = createdOnUtc;
         Status = OrderStatus.Draft;
     }
 
-    public CustomerName Customer { get; private set; }
+    /// <summary>Cliente do pedido, referenciado por identidade.</summary>
+    public int CustomerId { get; private set; }
 
     /// <summary>Moeda em que o pedido inteiro e expresso.</summary>
     public CurrencyCode Currency { get; private set; }
@@ -55,8 +58,8 @@ public sealed class Order : Entity<int>, IAggregateRoot
         _items.Aggregate(Money.Zero(Currency), (total, item) => total.Add(item.LineTotal));
 
     /// <summary>Abre um pedido em rascunho, sem itens.</summary>
-    public static Order Open(CustomerName customer, CurrencyCode currency, DateTime createdOnUtc) =>
-        new(customer, currency, createdOnUtc);
+    public static Order Open(int customerId, CurrencyCode currency, DateTime createdOnUtc) =>
+        new(customerId, currency, createdOnUtc);
 
     /// <summary>
     /// Adiciona uma linha. O preco unitario e construido na moeda do pedido,
@@ -98,7 +101,7 @@ public sealed class Order : Entity<int>, IAggregateRoot
         Status = OrderStatus.Placed;
         PlacedOnUtc = placedOnUtc;
 
-        Raise(new OrderPlaced(Id, Customer.Value, Currency.Value, Total.Amount, placedOnUtc));
+        Raise(new OrderPlaced(Id, CustomerId, Currency.Value, Total.Amount, placedOnUtc));
     }
 
     public void Cancel(DateTime cancelledOnUtc)

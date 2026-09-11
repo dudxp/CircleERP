@@ -18,13 +18,14 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasColumnName("id")
             .ValueGeneratedOnAdd();
 
-        builder.Property(order => order.Customer)
-            .HasColumnName("customer")
-            .HasMaxLength(CustomerName.MaxLength)
-            .IsRequired()
-            .HasConversion(
-                customer => customer.Value,
-                value => CustomerName.Create(value));
+        // Guarda apenas o id do cliente, sem chave estrangeira para customer,
+        // pelo mesmo motivo da moeda: agregados se referenciam por identidade.
+        builder.Property(order => order.CustomerId)
+            .HasColumnName("customer_id")
+            .IsRequired();
+
+        builder.HasIndex(order => order.CustomerId)
+            .HasDatabaseName("IX_order_header_customer_id");
 
         // Guarda apenas o codigo da moeda, sem chave estrangeira para currency:
         // um pedido e outro agregado, e referencia por identidade. Amarrar por
