@@ -16,6 +16,20 @@ public interface IAddressRepository
 
     Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Procura um endereco igual a este -- mesmo CEP, numero e complemento.
+    /// </summary>
+    /// <param name="exceptId">
+    /// Ignora este id. Usado na alteracao: um endereco nao e duplicata de si
+    /// mesmo.
+    /// </param>
+    Task<Address?> FindDuplicateAsync(
+        ZipCode zipCode,
+        AddressText number,
+        AddressText? complement,
+        int? exceptId = null,
+        CancellationToken cancellationToken = default);
+
     void Add(Address address);
 
     void Remove(Address address);

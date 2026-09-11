@@ -2,8 +2,10 @@ using CircleERP.Application.Addresses;
 using CircleERP.Application.Addresses.ChangeAddress;
 using CircleERP.Application.Addresses.GetAddressById;
 using CircleERP.Application.Addresses.GetAddresses;
+using CircleERP.Application.Addresses.LookupZipCode;
 using CircleERP.Application.Addresses.RegisterAddress;
 using CircleERP.Application.Addresses.RemoveAddress;
+using CircleERP.Application.Abstractions.ZipCodes;
 using CircleERP.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +34,24 @@ public sealed class AddressesController(ISender sender) : ControllerBase
         return result.ToActionResult(this);
     }
 
+    /// <summary>Consulta o endereco de um CEP.</summary>
+    /// <remarks>
+    /// Conveniencia para o formulario. Se o servico externo nao responder, vem
+    /// 503 e a tela cai para o preenchimento manual -- o cadastro nunca fica
+    /// refem da consulta.
+    /// </remarks>
+    [HttpGet("lookup/{zipCode}")]
+    [ProducesResponseType<ZipCodeLookupResult>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<IActionResult> Lookup(string zipCode, CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(new LookupZipCodeQuery(zipCode), cancellationToken);
+
+        return result.ToActionResult(this);
+    }
+
     [HttpGet("{id:int}")]
     [ProducesResponseType<AddressResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -42,9 +62,14 @@ public sealed class AddressesController(ISender sender) : ControllerBase
         return result.ToActionResult(this);
     }
 
+    /// <summary>
+    /// Cadastra um endereco. Um endereco identico ja cadastrado devolve 409 com
+    /// <c>existingAddressId</c> nas extensoes, para a tela oferecer o vinculo.
+    /// </summary>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register(
         AddressFields fields,
         CancellationToken cancellationToken)

@@ -1,4 +1,5 @@
 using System.Data.Common;
+using CircleERP.Application.Abstractions.ZipCodes;
 using CircleERP.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -7,6 +8,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CircleERP.Api.IntegrationTests;
 
@@ -32,6 +34,9 @@ public sealed class CircleErpApiFactory : WebApplicationFactory<Program>
         "server=localhost;database=circleerp_test;user=test;password=test";
 
     private DbConnection? _connection;
+
+    /// <summary>Consulta de CEP usada pelos testes, no lugar do ViaCEP.</summary>
+    public FakeZipCodeLookup ZipCodeLookup { get; } = new();
 
     /// <summary>
     /// Fornece, por variavel de ambiente, a configuracao que o Program.cs le
@@ -71,6 +76,11 @@ public sealed class CircleErpApiFactory : WebApplicationFactory<Program>
             _connection.Open();
 
             services.AddDbContext<AppDbContext>(options => options.UseSqlite(_connection));
+
+            // Sem isto os testes bateriam no ViaCEP de verdade: rede, latencia
+            // e resultado dependendo de um servico de terceiro.
+            services.RemoveAll<IZipCodeLookup>();
+            services.AddSingleton<IZipCodeLookup>(ZipCodeLookup);
         });
     }
 

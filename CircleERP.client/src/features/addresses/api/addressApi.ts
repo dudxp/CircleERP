@@ -1,6 +1,11 @@
 import { httpClient } from "@shared/api/httpClient";
 import { toApiError } from "@shared/api/problemDetails";
-import { toPayload, type Address, type AddressFormValues } from "../model/address";
+import {
+  toPayload,
+  type Address,
+  type AddressFormValues,
+  type ZipCodeLookup,
+} from "../model/address";
 
 const resource = "addresses";
 
@@ -16,6 +21,19 @@ export const addressApi = {
   list: (signal?: AbortSignal) =>
     request(async () => {
       const { data } = await httpClient.get<Address[]>(resource, { signal });
+      return data;
+    }),
+
+  /**
+   * Consulta o endereco de um CEP. A API fala com o servico externo -- o front
+   * continua conhecendo apenas a nossa API.
+   */
+  lookupZipCode: (zipCode: string, signal?: AbortSignal) =>
+    request(async () => {
+      const { data } = await httpClient.get<ZipCodeLookup>(
+        `${resource}/lookup/${encodeURIComponent(zipCode)}`,
+        { signal }
+      );
       return data;
     }),
 

@@ -31,12 +31,37 @@ public static class ResultExtensions
                 (StatusCodes.Status404NotFound, "Recurso nao encontrado"),
             _ when errors.Any(error => error is ConflictError) =>
                 (StatusCodes.Status409Conflict, "Conflito com o estado atual"),
+            _ when errors.Any(error => error is UnavailableError) =>
+                (StatusCodes.Status503ServiceUnavailable, "Servico indisponivel"),
             _ => (StatusCodes.Status400BadRequest, "Requisicao invalida"),
         };
 
-        return controller.Problem(
+        var problem = controller.Problem(
             statusCode: statusCode,
             title: title,
             detail: string.Join(" ", errors.Select(error => error.Message)));
+
+        CopyMetadata(errors, problem);
+
+        return problem;
+    }
+
+    /// <summary>
+    /// Leva os metadados do erro para as extensoes do ProblemDetails.
+    /// </summary>
+    /// <remarks>
+    /// E como o cliente recebe o dado que torna o erro acionavel -- por exemplo,
+    /// o id do endereco ja cadastrado, para oferecer o vinculo em vez de apenas
+    /// dizer que houve conflito.
+    /// </remarks>
+    private static void CopyMetadata(List<IError> errors, ObjectResult problem)
+    {
+        if (problem.Value is not ProblemDetails details)
+            return;
+
+        foreach (var (key, value) in errors.SelectMany(error => error.Metadata))
+        {
+            details.Extensions[key] = value;
+        }
     }
 }

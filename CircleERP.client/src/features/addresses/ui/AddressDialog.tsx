@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { useState } from "react";
-import { toApiError } from "@shared/api/problemDetails";
+import { ApiError, toApiError } from "@shared/api/problemDetails";
 import { addressApi } from "../api/addressApi";
 import { emptyAddressForm, type AddressFormValues } from "../model/address";
 import AddressFormFields from "./AddressFormFields";
@@ -30,12 +30,21 @@ interface Props {
 export default function AddressDialog({ open, onClose, onCreated }: Props) {
   const [values, setValues] = useState<AddressFormValues>(emptyAddressForm);
   const [error, setError] = useState<string | null>(null);
+  const [duplicateId, setDuplicateId] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   const close = () => {
     setValues(emptyAddressForm);
     setError(null);
+    setDuplicateId(null);
     onClose();
+  };
+
+  const linkExisting = () => {
+    if (duplicateId === null) return;
+
+    onCreated(duplicateId);
+    close();
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -43,13 +52,20 @@ export default function AddressDialog({ open, onClose, onCreated }: Props) {
 
     setIsSaving(true);
     setError(null);
+    setDuplicateId(null);
 
     try {
       const addressId = await addressApi.register(values);
       onCreated(addressId);
       close();
     } catch (caught) {
-      setError(toApiError(caught).message);
+      const apiError = caught instanceof ApiError ? caught : toApiError(caught);
+
+      setError(apiError.message);
+
+      // A API manda o id do endereco ja cadastrado; em vez de so recusar,
+      // oferecemos vincular aquele.
+      setDuplicateId(apiError.numberExtension("existingAddressId"));
     } finally {
       setIsSaving(false);
     }
@@ -62,7 +78,17 @@ export default function AddressDialog({ open, onClose, onCreated }: Props) {
 
         <DialogContent>
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert
+              severity={duplicateId === null ? "error" : "warning"}
+              sx={{ mb: 2 }}
+              action={
+                duplicateId === null ? undefined : (
+                  <Button color="inherit" size="small" onClick={linkExisting}>
+                    Vincular o existente
+                  </Button>
+                )
+              }
+            >
               {error}
             </Alert>
           )}

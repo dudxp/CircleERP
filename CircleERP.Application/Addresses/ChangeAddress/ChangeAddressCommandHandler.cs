@@ -21,6 +21,12 @@ internal sealed class ChangeAddressCommandHandler(
         var (zipCode, street, number, complement, district, city, state) =
             command.Fields.ToValueObjects();
 
+        var duplicate = await addresses.FindDuplicateAsync(
+            zipCode, number, complement, command.Id, cancellationToken);
+
+        if (duplicate is not null)
+            return Result.Fail(AddressErrors.AlreadyExists(duplicate.Id, duplicate.ToSingleLine()));
+
         address.Change(zipCode, street, number, complement, district, city, state);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

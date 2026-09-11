@@ -1,4 +1,5 @@
-import { MenuItem, Stack, TextField } from "@mui/material";
+import { CircularProgress, InputAdornment, MenuItem, Stack, TextField } from "@mui/material";
+import { useZipCodeAutofill } from "../hooks/useZipCodeAutofill";
 import { brazilianStates, type AddressFormValues } from "../model/address";
 
 interface Props {
@@ -13,10 +14,23 @@ interface Props {
  * Existe separado justamente para servir aos dois lugares que cadastram
  * endereco: a aba propria e o popup dentro da tela de cliente. Uma copia em
  * cada lugar viraria duas telas divergindo com o tempo.
+ *
+ * Digitar os 8 digitos do CEP preenche logradouro, bairro, cidade e UF. Numero
+ * e complemento continuam por conta do usuario -- o CEP nao os conhece.
  */
 export default function AddressFormFields({ values, onChange, disabled }: Props) {
+  const { isLooking, notice, lookup, clearNotice } = useZipCodeAutofill(values, onChange);
+
   const set = (field: keyof AddressFormValues) => (value: string) =>
     onChange({ ...values, [field]: value });
+
+  const handleZipCodeChange = (value: string) => {
+    clearNotice();
+    set("zipCode")(value);
+
+    // Dispara sozinho ao completar os digitos, em vez de exigir um botao.
+    void lookup(value);
+  };
 
   return (
     <Stack spacing={2}>
@@ -24,10 +38,21 @@ export default function AddressFormFields({ values, onChange, disabled }: Props)
         <TextField
           label="CEP"
           value={values.zipCode}
-          onChange={(event) => set("zipCode")(event.target.value)}
-          slotProps={{ htmlInput: { maxLength: 9 } }}
-          helperText="8 dígitos"
-          sx={{ width: 160 }}
+          onChange={(event) => handleZipCodeChange(event.target.value)}
+          onBlur={(event) => void lookup(event.target.value)}
+          slotProps={{
+            htmlInput: { maxLength: 9 },
+            input: {
+              endAdornment: isLooking ? (
+                <InputAdornment position="end">
+                  <CircularProgress size={18} />
+                </InputAdornment>
+              ) : undefined,
+            },
+          }}
+          error={Boolean(notice)}
+          helperText={notice ?? "8 dígitos — preenche o resto"}
+          sx={{ width: 240 }}
           disabled={disabled}
           required
         />
@@ -37,7 +62,7 @@ export default function AddressFormFields({ values, onChange, disabled }: Props)
           onChange={(event) => set("street")(event.target.value)}
           slotProps={{ htmlInput: { maxLength: 150 } }}
           sx={{ flexGrow: 1 }}
-          disabled={disabled}
+          disabled={disabled || isLooking}
           required
         />
         <TextField

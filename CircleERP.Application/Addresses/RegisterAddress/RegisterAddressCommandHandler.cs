@@ -16,6 +16,12 @@ internal sealed class RegisterAddressCommandHandler(
         var (zipCode, street, number, complement, district, city, state) =
             command.Fields.ToValueObjects();
 
+        var duplicate = await addresses.FindDuplicateAsync(
+            zipCode, number, complement, cancellationToken: cancellationToken);
+
+        if (duplicate is not null)
+            return Result.Fail<int>(AddressErrors.AlreadyExists(duplicate.Id, duplicate.ToSingleLine()));
+
         var address = Address.Register(zipCode, street, number, complement, district, city, state);
 
         addresses.Add(address);

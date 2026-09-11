@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using CircleERP.Application.Abstractions.ZipCodes;
 using CircleERP.Application.Addresses;
 using Microsoft.AspNetCore.Mvc;
 
@@ -186,5 +187,109 @@ public class AddressesEndpointsTests
         var addresses = await _client.GetFromJsonAsync<List<AddressResponse>>("/api/addresses");
 
         Assert.That(addresses, Is.Empty);
+    }
+
+    [Test]
+    public async Task Cadastrar_endereco_identico_devolve_409_com_o_id_do_existente()
+    {
+        var existingId = await RegisterAsync();
+
+        var response = await _client.PostAsJsonAsync("/api/addresses", Fields());
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
+
+        // O id vem nas extensoes do ProblemDetails para a tela poder oferecer o
+        // vinculo, em vez de so dizer que houve conflito.
+        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+
+        Assert.That(
+            problem!.Extensions["existingAddressId"]!.ToString(),
+            Is.EqualTo(existingId.ToString()));
+    }
+
+    [Test]
+    public async Task Complemento_diferente_nao_e_duplicata()
+    {
+        await RegisterAsync();
+
+        var response = await _client.PostAsJsonAsync(
+            "/api/addresses",
+            Fields(complement: "Apto 42"));
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+    }
+
+    [Test]
+    public async Task Alterar_um_endereco_para_ficar_igual_a_outro_devolve_409()
+    {
+        await RegisterAsync();
+        var second = await RegisterAsync(Fields(complement: "Apto 42"));
+
+        var response = await _client.PutAsJsonAsync($"/api/addresses/{second}", Fields());
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
+    }
+
+    [Test]
+    public async Task Alterar_mantendo_os_proprios_dados_nao_e_duplicata()
+    {
+        var id = await RegisterAsync();
+
+        var response = await _client.PutAsJsonAsync($"/api/addresses/{id}", Fields());
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+    }
+
+    [Test]
+    public async Task Consultar_cep_devolve_o_endereco()
+    {
+        _factory.ZipCodeLookup.Result = new ZipCodeLookupResult(
+            "01310100", "Avenida Paulista", "Bela Vista", "Sao Paulo", "SP");
+
+        var result = await _client.GetFromJsonAsync<ZipCodeLookupResult>(
+            "/api/addresses/lookup/01310-100");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result!.Street, Is.EqualTo("Avenida Paulista"));
+            Assert.That(result.City, Is.EqualTo("Sao Paulo"));
+            Assert.That(result.State, Is.EqualTo("SP"));
+        });
+    }
+
+    [Test]
+    public async Task Consultar_cep_inexistente_devolve_404()
+    {
+        _factory.ZipCodeLookup.Result = null;
+
+        var response = await _client.GetAsync("/api/addresses/lookup/99999999");
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+    }
+
+    [Test]
+    public async Task Consultar_cep_com_formato_invalido_nem_chama_o_servico()
+    {
+        // O value object recusa antes: nao vale gastar uma requisicao externa
+        // para descobrir que "123" nao e um CEP.
+        _factory.ZipCodeLookup.IsUnavailable = true;
+
+        var response = await _client.GetAsync("/api/addresses/lookup/123");
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    [Test]
+    public async Task Servico_de_cep_fora_do_ar_devolve_503()
+    {
+        _factory.ZipCodeLookup.IsUnavailable = true;
+
+        var response = await _client.GetAsync("/api/addresses/lookup/01310-100");
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.ServiceUnavailable));
+
+        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+
+        Assert.That(problem!.Detail, Does.Contain("manualmente"));
     }
 }

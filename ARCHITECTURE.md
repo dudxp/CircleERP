@@ -140,6 +140,12 @@ O cliente referencia o endereco por identidade, sem chave estrangeira. Nada no
 banco impede excluir um endereco em uso, entao a integridade e garantida no caso
 de uso (`RemoveAddress` responde 409), e ha teste de integracao provando isso.
 
+Cadastrar um endereco identico a um existente -- mesmo CEP, numero e complemento
+-- responde 409 com `existingAddressId` nas **extensoes do ProblemDetails**, e a
+tela oferece vincular o que ja existe em vez de apenas recusar. E para isso que
+`ResultExtensions` copia os metadados do erro para a resposta: e o que separa um
+erro que o usuario le de um erro sobre o qual ele pode agir.
+
 ### Order
 
 Pedido de venda. `OrderItem` e entidade interna: so existe atraves do pedido, e
@@ -190,6 +196,23 @@ Sao duas coisas diferentes, e a borda trata cada uma de um jeito:
 A traducao acontece em dois lugares unicos: `DomainExceptionHandler` para o
 primeiro caso e `ResultExtensions` para os demais. Nenhuma action repete essa
 decisao, e todas respondem em `ProblemDetails`.
+
+## Servicos externos
+
+A consulta de CEP e uma porta: `IZipCodeLookup` na Application, adaptador
+`ViaCepZipCodeLookup` na Infrastructure. A aplicacao sabe que existe uma forma
+de consultar CEP, e nao qual servico atende -- trocar de provedor, ou usar um
+falso nos testes, nao toca em nada fora da infra.
+
+O ViaCEP e um servico comunitario gratuito, sem contrato de disponibilidade. Por
+isso toda falha vira `UnavailableError` (503) em vez de subir como erro do
+servidor: a consulta e uma conveniencia, e o cadastro continua possivel na mao.
+O formulario segue editavel, e numero e complemento nunca sao tocados pela
+consulta, porque o CEP nao os conhece.
+
+Os testes de integracao substituem o adaptador por um `FakeZipCodeLookup` e
+cobrem os tres desfechos -- achou, nao achou e servico fora -- sem depender da
+rede.
 
 ## Banco de dados
 

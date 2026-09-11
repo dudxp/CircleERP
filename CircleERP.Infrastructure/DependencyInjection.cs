@@ -1,11 +1,13 @@
 using CircleERP.Application.Abstractions.Persistence;
 using CircleERP.Application.Abstractions.Time;
+using CircleERP.Application.Abstractions.ZipCodes;
 using CircleERP.Domain.Addresses;
 using CircleERP.Domain.Currencies;
 using CircleERP.Domain.Customers;
 using CircleERP.Domain.Orders;
 using CircleERP.Infrastructure.Persistence;
 using CircleERP.Infrastructure.Persistence.Repositories;
+using CircleERP.Infrastructure.ExternalServices;
 using CircleERP.Infrastructure.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +44,14 @@ public static class DependencyInjection
         services.AddScoped<IAddressRepository, AddressRepository>();
 
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
+
+        // Timeout curto de proposito: a consulta e uma conveniencia, e prender
+        // o formulario esperando um servico externo e pior do que digitar.
+        services.AddHttpClient<IZipCodeLookup, ViaCepZipCodeLookup>(client =>
+        {
+            client.BaseAddress = new Uri("https://viacep.com.br/");
+            client.Timeout = TimeSpan.FromSeconds(5);
+        });
 
         return services;
     }

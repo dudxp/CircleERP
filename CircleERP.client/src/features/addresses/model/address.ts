@@ -59,3 +59,12 @@ export const brazilianStates = [
   "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
   "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO",
 ] as const;
+
+/** Resultado da consulta de CEP. Nao traz numero nem complemento. */
+export interface ZipCodeLookup {
+  zipCode: string;
+  street: string;
+  district: string;
+  city: string;
+  state: string;
+}
